@@ -8,6 +8,7 @@ public class TrackMovement : MonoBehaviour {
 	int vertCount;
 	int trackCount;
 	int currentFrame = 0;
+	float scale = 0.07f;
 
 	GameObject[] dots;
 
@@ -15,6 +16,15 @@ public class TrackMovement : MonoBehaviour {
 		mesh = GetComponent<MeshFilter> ().mesh;
 		verts = mesh.vertices;
 		vertCount = mesh.vertexCount;
+
+		/*for(int i=0; i < vertCount; i++){
+			GameObject dot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			dot.transform.position = verts[i];
+			dot.transform.localScale = new Vector3(scale/7f,scale/7f,scale/7f);
+			dot.transform.SetParent (transform);
+			dot.name = "basedot";
+		}*/
+
 		trackCount = (int) (vertCount / 33);
 
 		dots = new GameObject[trackCount];
@@ -22,7 +32,10 @@ public class TrackMovement : MonoBehaviour {
 		for(int i=0; i < trackCount; i++){
 			GameObject dot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 			dot.transform.position = verts[i * 33];
-			dot.transform.localScale = new Vector3(0.1f,0.1f,0.1f);
+			dot.transform.localScale = new Vector3(scale,scale,scale);
+			dot.GetComponent<Renderer> ().material.color = Color.yellow;
+			dot.transform.SetParent (transform);
+			dot.name = "Track " + i;
 			dots [i] = dot;
 		}
 
@@ -37,24 +50,26 @@ public class TrackMovement : MonoBehaviour {
 			MoveDots (1);
 		}
 	}
-	/*
-	IEnumerator AnimateDots(){
-		while(true){
-			for(int j=0; j < 33; j++){//for each animation frame
-				for(int i=0; i < trackCount; i++){//for each track per frame
-					dots [i].transform.position = verts[(i * 33) + j];
-				}
-				yield return new WaitForSeconds (1f);
-			}
-		}
-	}*/
 
-	void MoveDots(int lr){
-		if(currentFrame + lr >= 0 && currentFrame + lr <= 32){
-			currentFrame += lr;
-			for(int i=0; i < trackCount; i++){//for each track per frame
-				dots [i].transform.position = verts[(i * 33) + currentFrame];
+	IEnumerator AnimateDots(){
+		int direction = 1;
+		while(true){
+			if (!MoveDots (direction)) {
+				direction *= -1;
 			}
+			yield return new WaitForSeconds(0.017f);
+		}
+	}
+
+	bool MoveDots(int lr){
+		if (currentFrame + lr >= 0 && currentFrame + lr <= 32) {
+			currentFrame += lr;
+			for (int i = 0; i < trackCount; i++) {//for each track per frame
+				dots [i].transform.position = verts [(i * 33) + currentFrame];
+			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 

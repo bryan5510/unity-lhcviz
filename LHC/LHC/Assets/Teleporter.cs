@@ -9,14 +9,14 @@ public class Teleporter : MonoBehaviour {
 	LineRenderer lineRenderer;
 	bool turnOnLazer = false;
 	Vector3 startingPos;
-	Quaternion startingRot;
+	//Quaternion startingRot;
 
 	void Awake () {
 		camRig = GameObject.Find ("[CameraRig]");
 		trackedObj = GetComponent<SteamVR_TrackedObject> ();
 		lineRenderer = GetComponent<LineRenderer> ();
 		startingPos = camRig.transform.position;
-		startingRot = camRig.transform.rotation;
+		//startingRot = camRig.transform.rotation;
 	}
 
 	void Update () {
