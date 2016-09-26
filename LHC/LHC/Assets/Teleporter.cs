@@ -24,17 +24,6 @@ public class Teleporter : MonoBehaviour {
 		lineRenderer.SetPosition (1, transform.position);
 		var device = SteamVR_Controller.Input((int)trackedObj.index);
 
-		/*
-		if(device.GetPressDown (SteamVR_Controller.ButtonMask.ApplicationMenu)){
-			GameObject.Find ("tank").GetComponent<DataRetriever> ().GetXML();
-		}
-		if(device.GetPressDown (SteamVR_Controller.ButtonMask.Grip)){
-			GameObject[] allFish = GameObject.FindGameObjectsWithTag("fish");
-			foreach(GameObject fish in allFish){
-				Destroy(fish);
-			}
-		}
-		*/
 		if (device.GetPressDown (SteamVR_Controller.ButtonMask.Trigger)) {
 			turnOnLazer = true;
 		}

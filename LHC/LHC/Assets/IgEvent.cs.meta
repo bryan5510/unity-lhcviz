@@ -1,10 +1,12 @@
 fileFormatVersion: 2
 guid: 8947289ab01465f46aec49574f62f265
-timeCreated: 1472836950
+timeCreated: 1474471581
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - dotShape: {instanceID: 0}
+  - texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
