@@ -6,22 +6,13 @@ using System.IO;
 public class IgEvent : MonoBehaviour{
 
 	public GameObject dotShape;
+	public Material mat;
+
 	GameObject[] tracks;
 	int currentFrame = 0;
 	int fps = 90;
-	public Material mat;
 	Vector3[,] LRpoints;
 	bool stopAnim = false;
-	 
-	void Start(){
-		//parseTracks ();
-		parseExtras ("Event_718938502");
-		//Debug.Log (eventFile);
-		foreach(GameObject track in tracks){
-			track.transform.SetParent (transform);
-		}
-		StartCoroutine (AnimateDots ());
-	}
 
 	public void StartAnim(){
 		stopAnim = false;
@@ -93,7 +84,7 @@ public class IgEvent : MonoBehaviour{
 		Vector3[] LRthisTrack = GetTrack (i,currentFrame);
 		lr.SetPositions (LRthisTrack);
 	}
-
+	/*
 	void parseTracks(string eventName){
 		string eventFile = File.ReadAllText("Assets\\ispy-webgl-master\\data\\Electron\\Events\\Run_146644\\" + eventName);
 		int tracksLoc = eventFile.IndexOf ("Collections");
@@ -126,12 +117,12 @@ public class IgEvent : MonoBehaviour{
 				//Debug.Log (values[j]);
 			}
 		}
-	}
+	}*/
 
-	void parseExtras(string eventName){
+	public void parseExtras(FileInfo eventInfo){
 		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
 		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 
-		string eventFile = File.ReadAllText("Assets\\ispy-webgl-master\\data\\Electron\\Events\\Run_146644\\" + eventName);
+		string eventFile = File.ReadAllText(eventInfo.ToString());
 		int tracksLoc = eventFile.IndexOf ("Collections");
 		eventFile = eventFile.Substring (tracksLoc);
 		tracksLoc = eventFile.IndexOf ("Extras_V");
@@ -164,6 +155,7 @@ public class IgEvent : MonoBehaviour{
 			lines[i] = lines[i].Substring(tracksEnd);
 			tracksEnd = lines[i].IndexOf ("[");
 			lines[i] = lines[i].Substring(tracksEnd);
+			lines[i] = lines[i] + "]],";
 			tracksEnd = lines[i].IndexOf ("]");
 			string dir2 = lines[i].Substring (1,tracksEnd-1);
 			string text = pos1 + "," + dir1 + "," + pos2 + "," + dir2;
@@ -217,6 +209,11 @@ public class IgEvent : MonoBehaviour{
 			trks [i] = curve;
 		}
 		tracks = trks;
+
+		foreach(GameObject track in tracks){
+			track.transform.SetParent (transform);
+		}
+		StartCoroutine (AnimateDots ());
 	}
 
 
