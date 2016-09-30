@@ -119,7 +119,7 @@ public class IgEvent : MonoBehaviour{
 		}
 	}*/
 
-	public void parseExtras(FileInfo eventInfo){
+	public bool parseExtras(FileInfo eventInfo){
 		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
 		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 
 		string eventFile = File.ReadAllText(eventInfo.ToString());
@@ -130,7 +130,12 @@ public class IgEvent : MonoBehaviour{
 		tracksLoc = eventFile.IndexOf (":");
 		eventFile = eventFile.Substring (tracksLoc);
 		int tracksEnd = eventFile.IndexOf ("\"");
-		eventFile = eventFile.Substring (3,tracksEnd-10);
+		try{
+			eventFile = eventFile.Substring (3,tracksEnd-10);}
+		catch{
+			Debug.Log ("No tracks in event "+eventInfo.Name);
+			return false;
+		}
 		string[] lines = eventFile.Split ("\n"[0]);
 
 		GameObject[] trks = new GameObject[lines.Length];
@@ -214,6 +219,7 @@ public class IgEvent : MonoBehaviour{
 			track.transform.SetParent (transform);
 		}
 		StartCoroutine (AnimateDots ());
+		return true;
 	}
 
 
