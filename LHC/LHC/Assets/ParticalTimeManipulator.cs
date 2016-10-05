@@ -28,5 +28,14 @@ public class ParticalTimeManipulator : MonoBehaviour {
 			IE.SetCurrentFrame (t);
 			//Debug.Log(t);
 		}
+
+		if (device.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)){
+			EventSpawner ES = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+			ES.IncRun ();
+		}
+		if (device.GetPressDown (SteamVR_Controller.ButtonMask.Touchpad)){
+			EventSpawner ES = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+			ES.IncEvent ();
+		}
 	}
 }

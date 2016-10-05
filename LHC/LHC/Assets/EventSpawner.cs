@@ -79,26 +79,32 @@ public class EventSpawner : MonoBehaviour {
 	}
 
 	void Update () {
-	
-		if(Input.GetKeyDown(KeyCode.N) && eventFiles.Length > 1){
-			if (currentEvent + 1 < eventFiles.Length) {
-				currentEvent++;
-			} else {
-				currentEvent = 0;
-			}
-			CreateEvent (eventFiles[currentEvent]);
+		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
+			IncEvent ();
 		}
 		if(Input.GetKeyDown(KeyCode.M) && runFolders.Length > 1){
-			if (currentRun + 1 < runFolders.Length) {
-				currentRun++;
-			} else {
-				currentRun = 0;
-			}
-			SwapEvent (currentRun);
+			IncRun ();
 		}
 		if(Input.GetKeyDown(KeyCode.R)){
 			Reset ();
 		}
+	}
 
+	public void IncEvent(){
+		if (currentEvent + 1 < eventFiles.Length) {
+			currentEvent++;
+		} else {
+			currentEvent = 0;
+		}
+		CreateEvent (eventFiles [currentEvent]);
+	}
+
+	public void IncRun(){
+		if (currentRun + 1 < runFolders.Length) {
+			currentRun++;
+		} else {
+			currentRun = 0;
+		}
+		SwapEvent (currentRun);
 	}
 }
