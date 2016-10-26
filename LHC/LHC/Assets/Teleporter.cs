@@ -44,6 +44,19 @@ public class Teleporter : MonoBehaviour {
 						//camRig.transform.rotation = warpPoint.rotation;
 
 						Physics.Raycast (transform.position, transform.TransformDirection (Vector3.forward), out hit);
+					}else if(hit.collider.gameObject.tag == "Button"){
+						ButtonManager btn = hit.collider.gameObject.GetComponent<ButtonManager>();
+						if (btn.name.Equals ("Back")) {
+							btn.GoBack();
+						} else if (btn.name.Equals ("Refresh")) {
+							btn.Refresh();
+						} else {
+							if (btn.isEvent) {
+								btn.ChangeEvent();
+							} else {
+								btn.ChangeRun();
+							}
+						}
 					}
 				}
 				lineRenderer.SetPosition (0, transform.position);

@@ -27,7 +27,7 @@ public class ButtonManager : MonoBehaviour {
 		}
 	}
 
-	void ChangeRun () {
+	public void ChangeRun () {
 		Debug.Log (btn.name);
 		EvSpa.SetRun (btn.name);
 		igLstr.ShowEvents (btn.name);
@@ -35,18 +35,18 @@ public class ButtonManager : MonoBehaviour {
 		btn.transform.parent.parent.parent.parent.FindChild ("Refresh").gameObject.SetActive (false);
 	}
 
-	void ChangeEvent () {
+	public void ChangeEvent () {
 		Debug.Log (btn.name);
 		EvSpa.SetEvent (btn.name);
 	}
 
-	void GoBack () {
+	public void GoBack () {
 		igLstr.ShowRuns ();
 		btn.transform.parent.FindChild ("Refresh").gameObject.SetActive(true);
 		gameObject.SetActive (false);
 	}
 
-	void Refresh(){
+	public void Refresh(){
 		EvSpa.Reset ();
 		igLstr.ShowRuns ();
 	}
