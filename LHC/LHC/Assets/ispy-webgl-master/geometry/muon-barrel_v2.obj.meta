@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 79462af4afa7eb44dbe1f1c2316765da
-timeCreated: 1470776190
+timeCreated: 1476459312
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -20,7 +20,7 @@ ModelImporter:
     4300000: default_MeshPart0
     4300002: default_MeshPart1
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:

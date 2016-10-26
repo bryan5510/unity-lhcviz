@@ -30,18 +30,21 @@ public class Teleporter : MonoBehaviour {
 		if(device.GetPressUp (SteamVR_Controller.ButtonMask.Trigger)){
 			turnOnLazer = false;
 		}
+		if(device.GetPressDown (SteamVR_Controller.ButtonMask.ApplicationMenu)){
+			ShowAppMenu ();
+		}
 		if(turnOnLazer){
 			RaycastHit hit;
 			bool wasHit = Physics.Raycast (transform.position, transform.TransformDirection(Vector3.forward), out hit);
 			if(wasHit){
-				if (device.GetPressDown (SteamVR_Controller.ButtonMask.Touchpad) || device.GetPressDown (SteamVR_Controller.ButtonMask.ApplicationMenu)){
-					//if (hit.collider.gameObject.tag == "Warp") {
+				if (device.GetPressDown (SteamVR_Controller.ButtonMask.Touchpad)){
+					if (hit.collider.gameObject.tag == "Warp") {
 						Vector3 warpPoint = hit.point;
 						camRig.transform.position = warpPoint;
 						//camRig.transform.rotation = warpPoint.rotation;
 
 						Physics.Raycast (transform.position, transform.TransformDirection (Vector3.forward), out hit);
-					//}
+					}
 				}
 				lineRenderer.SetPosition (0, transform.position);
 				lineRenderer.SetPosition (1, hit.point);
@@ -57,4 +60,10 @@ public class Teleporter : MonoBehaviour {
 			}
 		}*/
 	}
+
+	void ShowAppMenu(){
+		GameObject canvas = GameObject.Find ("Canvas");
+		canvas.SetActive(!canvas.activeSelf);
+	}
+
 }

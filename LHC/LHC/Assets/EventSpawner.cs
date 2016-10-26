@@ -18,33 +18,39 @@ public class EventSpawner : MonoBehaviour {
 
 	void Start () {
 		Reset ();
+		SwapRun (0);
 	}
 
-	void Reset(){
+	public void Reset(){
 		currentEvent = 0;
 		currentRun = 0;
 
+		DirectoryInfo igFolder = new DirectoryInfo ("Data\\igFiles");
+		igFiles = igFolder.GetFiles ();
 		UnzipAll ();
 
 		DirectoryInfo eventFolder = new DirectoryInfo (dataEventPath);
 		runFolders = eventFolder.GetDirectories ();
-
-		SwapEvent (0);
 	}
 
-	void SwapEvent(int i){
+	public FileInfo[] GetIgFiles(){
+		return igFiles;
+	}
+
+	public FileInfo[] GetEventFiles(){
+		return eventFiles;
+	}
+
+	void SwapRun(int i){
 		if(i >= 0 && i < runFolders.Length){
+			currentRun = i;
 			currentEvent = 0;
 			eventFiles = runFolders[i].GetFiles();
-			CreateEvent (eventFiles[currentEvent]);
+			SwapEvent (currentEvent);
 		}
 	}
 
 	void UnzipAll(){
-
-		DirectoryInfo igFolder = new DirectoryInfo ("Data\\igFiles");
-		igFiles = igFolder.GetFiles ();
-
 		foreach(FileInfo ig in igFiles){
 			Unzip (ig);
 		}
@@ -96,7 +102,7 @@ public class EventSpawner : MonoBehaviour {
 		} else {
 			currentEvent = 0;
 		}
-		CreateEvent (eventFiles [currentEvent]);
+		SwapEvent (currentEvent);
 	}
 
 	public void IncRun(){
@@ -105,6 +111,32 @@ public class EventSpawner : MonoBehaviour {
 		} else {
 			currentRun = 0;
 		}
-		SwapEvent (currentRun);
+		SwapRun (currentRun);
 	}
+
+	public void SwapEvent(int eventNum){
+		if(eventNum < eventFiles.Length && eventNum >= 0){
+			CreateEvent (eventFiles [eventNum]);
+		}
+	}
+
+	public void SetEvent(String buttonName){
+		for(int i = 0; i < eventFiles.Length; i++){
+			if(eventFiles[i].Name.Equals(buttonName)){
+				currentEvent = i;
+				SwapEvent (currentEvent);
+				return;
+			}
+		}
+	}
+
+	public void SetRun(String buttonName){
+		for(int i = 0; i < igFiles.Length; i++){
+			if(igFiles[i].Name.Equals(buttonName)){
+				SwapRun (i);
+				return;
+			}
+		}
+	}
+
 }

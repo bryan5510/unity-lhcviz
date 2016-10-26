@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: a65c535965201344084e90eefc78d395
-timeCreated: 1471287762
+timeCreated: 1476459312
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -13,7 +13,7 @@ ModelImporter:
     3300000: default
     4300000: default
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:
