@@ -6,6 +6,7 @@ using Ionic.Zip;
 
 public class EventSpawner : MonoBehaviour {
 
+	DirectoryInfo igFolder;
 	DirectoryInfo[] runFolders;
 	FileInfo[] eventFiles;
 	FileInfo[] igFiles;
@@ -17,6 +18,7 @@ public class EventSpawner : MonoBehaviour {
 	public Material mat;
 
 	void Start () {
+		igFolder = new DirectoryInfo ("Data\\igFiles");
 		Reset ();
 		SwapRun (0);
 	}
@@ -25,7 +27,6 @@ public class EventSpawner : MonoBehaviour {
 		currentEvent = 0;
 		currentRun = 0;
 
-		DirectoryInfo igFolder = new DirectoryInfo ("Data\\igFiles");
 		igFiles = igFolder.GetFiles ();
 		UnzipAll ();
 

@@ -16,6 +16,7 @@ public class igLister : MonoBehaviour {
 		EvSpa = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 		UI = GameObject.Find ("Canvas");
 		content = UI.transform.FindChild ("Scroll View").FindChild ("Viewport").FindChild ("Content").gameObject;
+		content.GetComponent<RectTransform> ().localPosition = Vector3.zero;
 	}
 	
 	// Update is called once per frame
@@ -43,7 +44,7 @@ public class igLister : MonoBehaviour {
 	void CreateButton(float pos, string name, Object buttonPrefab){
 		GameObject button = Instantiate (buttonPrefab, Vector3.zero, Quaternion.identity) as GameObject;
 		button.transform.SetParent (content.transform);
-		button.GetComponent<RectTransform> ().localScale.Set (1,1,1);
+		button.GetComponent<RectTransform> ().localScale = new Vector3(1,1,1);
 		button.GetComponent<RectTransform> ().anchoredPosition3D = new Vector3(0,pos,0);
 		button.name = name;
 		button.transform.FindChild("Text").GetComponent<Text>().text = name;
