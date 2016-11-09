@@ -4,6 +4,8 @@ using System.Collections;
 [RequireComponent(typeof(SteamVR_TrackedObject))]
 public class ParticalTimeManipulator : MonoBehaviour {
 
+	public GameObject canvas;
+	public Transform canvasHolder;
 	SteamVR_TrackedObject trackedObj;
 	Vector2 touchpad;
 
@@ -28,14 +30,26 @@ public class ParticalTimeManipulator : MonoBehaviour {
 			IE.SetCurrentFrame (t);
 			//Debug.Log(t);
 		}
+		if(device.GetPressDown (SteamVR_Controller.ButtonMask.ApplicationMenu)){
+			ShowAppMenu ();
+		}
+		/*
+		*if (device.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)){
+		*	EventSpawner ES = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+		*	ES.IncRun ();
+		*}
+		*if (device.GetPressDown (SteamVR_Controller.ButtonMask.Touchpad)){
+		*	EventSpawner ES = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+		*	ES.IncEvent ();
+		*}
+		*/
+	}
 
-		if (device.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)){
-			EventSpawner ES = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
-			ES.IncRun ();
+	void ShowAppMenu(){
+		if(canvas.activeSelf == false){
+			canvas.transform.position = canvasHolder.position;
+			canvas.transform.eulerAngles = new Vector3 (canvasHolder.eulerAngles.x,canvasHolder.eulerAngles.y,0);
 		}
-		if (device.GetPressDown (SteamVR_Controller.ButtonMask.Touchpad)){
-			EventSpawner ES = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
-			ES.IncEvent ();
-		}
+		canvas.SetActive(!canvas.activeSelf);
 	}
 }

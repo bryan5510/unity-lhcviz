@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 [RequireComponent(typeof(SteamVR_TrackedObject))]
 public class Teleporter : MonoBehaviour {
 
+	public GameObject canvas;
+	public Transform canvasHolder;
 	GameObject camRig;
 	SteamVR_TrackedObject trackedObj;
 	LineRenderer lineRenderer;
@@ -37,26 +40,31 @@ public class Teleporter : MonoBehaviour {
 			RaycastHit hit;
 			bool wasHit = Physics.Raycast (transform.position, transform.TransformDirection(Vector3.forward), out hit);
 			if(wasHit){
-				if (device.GetPressDown (SteamVR_Controller.ButtonMask.Touchpad)){
+				if (device.GetPressDown (SteamVR_Controller.ButtonMask.Touchpad)) {
 					if (hit.collider.gameObject.tag == "Warp") {
 						Vector3 warpPoint = hit.point;
 						camRig.transform.position = warpPoint;
 						//camRig.transform.rotation = warpPoint.rotation;
 
 						Physics.Raycast (transform.position, transform.TransformDirection (Vector3.forward), out hit);
-					}else if(hit.collider.gameObject.tag == "Button"){
-						ButtonManager btn = hit.collider.gameObject.GetComponent<ButtonManager>();
+					} else if (hit.collider.gameObject.tag == "Button") {
+						ButtonManager btn = hit.collider.gameObject.GetComponent<ButtonManager> ();
 						if (btn.name.Equals ("Back")) {
-							btn.GoBack();
+							btn.GoBack ();
 						} else if (btn.name.Equals ("Refresh")) {
-							btn.Refresh();
+							btn.Refresh ();
 						} else {
 							if (btn.isEvent) {
-								btn.ChangeEvent();
+								btn.ChangeEvent ();
 							} else {
-								btn.ChangeRun();
+								btn.ChangeRun ();
 							}
 						}
+					}
+				} else if (device.GetPress (SteamVR_Controller.ButtonMask.Touchpad)) {
+					if(hit.collider.gameObject.tag == "Handle"){
+						float dist = Vector3.Distance (new Vector3 (0f, hit.point.y, 0f), new Vector3 (0f, -2.82f, 0f));
+						hit.collider.gameObject.GetComponent<Scrollbar>().value = dist / .725f;
 					}
 				}
 				lineRenderer.SetPosition (0, transform.position);
@@ -75,7 +83,10 @@ public class Teleporter : MonoBehaviour {
 	}
 
 	void ShowAppMenu(){
-		GameObject canvas = GameObject.Find ("Canvas");
+		if(canvas.activeSelf == false){
+			canvas.transform.position = canvasHolder.position;
+			canvas.transform.eulerAngles = new Vector3 (canvasHolder.eulerAngles.x,canvasHolder.eulerAngles.y,0);
+		}
 		canvas.SetActive(!canvas.activeSelf);
 	}
 

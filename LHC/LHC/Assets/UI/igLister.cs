@@ -10,20 +10,22 @@ public class igLister : MonoBehaviour {
 	public Object runButtonPrefab;
 	public Object eventButtonPrefab;
 	GameObject content;
+	//GameObject handle;
+	//public Scrollbar scrollbar;
 
-	// Use this for initialization
 	void Start () {
-		EvSpa = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 		UI = GameObject.Find ("Canvas");
+		//handle = UI.transform.FindChild ("Scroll View").FindChild ("Scrollbar Vertical").FindChild ("Sliding Area").FindChild ("Handle").gameObject;
 		content = UI.transform.FindChild ("Scroll View").FindChild ("Viewport").FindChild ("Content").gameObject;
 		content.GetComponent<RectTransform> ().localPosition = Vector3.zero;
+		EvSpa = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if(Input.GetKeyDown(KeyCode.P)){
 			ShowRuns ();
 		}
+		//handle.transform.GetComponent<BoxCollider>().size = new Vector3(20f, 20f + (240f * scrollbar.size), 1f);
 	}
 
 	void PoputlateList(FileInfo[] files, Object buttonPrefab){
@@ -46,11 +48,13 @@ public class igLister : MonoBehaviour {
 		button.transform.SetParent (content.transform);
 		button.GetComponent<RectTransform> ().localScale = new Vector3(1,1,1);
 		button.GetComponent<RectTransform> ().anchoredPosition3D = new Vector3(0,pos,0);
+		button.GetComponent<RectTransform> ().localRotation = Quaternion.identity;
 		button.name = name;
 		button.transform.FindChild("Text").GetComponent<Text>().text = name;
 	}
 
 	public void ShowEvents(string runName){
+		content.GetComponent<RectTransform> ().localPosition = Vector3.zero;
 		FileInfo[] eventFiles = EvSpa.GetEventFiles ();
 		PoputlateList (eventFiles, eventButtonPrefab);
 	}
@@ -61,6 +65,7 @@ public class igLister : MonoBehaviour {
 	}
 
 	public void ShowRuns(){
+		content.GetComponent<RectTransform> ().localPosition = Vector3.zero;
 		FileInfo[] igFiles = EvSpa.GetIgFiles ();
 		PoputlateList (igFiles, runButtonPrefab);
 	}
