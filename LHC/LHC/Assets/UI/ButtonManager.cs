@@ -28,7 +28,7 @@ public class ButtonManager : MonoBehaviour {
 	}
 
 	public void ChangeRun () {
-		Debug.Log (btn.name);
+		//Debug.Log (btn.name);
 		EvSpa.SetRun (btn.name);
 		igLstr.ShowEvents (btn.name);
 		btn.transform.parent.parent.parent.parent.FindChild ("Back").gameObject.SetActive(true);
@@ -36,7 +36,7 @@ public class ButtonManager : MonoBehaviour {
 	}
 
 	public void ChangeEvent () {
-		Debug.Log (btn.name);
+		//Debug.Log (btn.name);
 		EvSpa.SetEvent (btn.name);
 	}
 
