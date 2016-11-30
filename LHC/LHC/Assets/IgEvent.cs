@@ -122,7 +122,7 @@ public class IgEvent : MonoBehaviour{
 	public bool parseExtras(FileInfo eventInfo){
 		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
 		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 
-		string eventFile = File.ReadAllText(eventInfo.ToString());
+		string eventFile = File.ReadAllText(eventInfo.FullName);
 		int tracksLoc = eventFile.IndexOf ("Collections");
 		eventFile = eventFile.Substring (tracksLoc);
 		tracksLoc = eventFile.IndexOf ("Extras_V");
