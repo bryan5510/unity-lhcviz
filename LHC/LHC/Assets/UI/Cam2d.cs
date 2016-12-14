@@ -31,7 +31,7 @@ public class Cam2d : MonoBehaviour {
 				autoScrollToggle (false);
 			}
 		}
-		if(Input.GetKeyDown(KeyCode.O)){
+		if(Input.GetKeyDown(KeyCode.O) || Input.GetKeyDown(KeyCode.Escape)){
 			canvas.SetActive (!canvas.activeSelf);
 		}
 		float y = 0;

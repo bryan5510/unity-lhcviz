@@ -191,13 +191,7 @@ public class IgEvent : MonoBehaviour{
 			curve.name = "track " + i;
 			BezierSpline bs = curve.AddComponent<BezierSpline> ();
 			bs.SetAllControlPoints (p1,p3,p4,p2);
-			bs.SetAllControlPointMode (BezierControlPointMode.Free);
-			SplineDecorator sd = curve.AddComponent<SplineDecorator> ();
-			sd.spline = bs;
-			sd.frequency = 1;
-			Transform[] dotShapes = new Transform[1] {dotShape.transform};
-			sd.items = dotShapes;
-			sd.MakeSpline();
+			bs.MakeSpline(1,new Transform[1] {dotShape.transform});
 
 			//Vector3[] LRpoints = new Vector3[fps + 1];
 			for(int j = 0; j < fps + 1; j++){
