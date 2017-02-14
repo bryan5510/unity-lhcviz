@@ -18,12 +18,8 @@ namespace Valve.VR.InteractionSystem
 			//var device = SteamVR_Controller.Input((int)trackedObj.index);
 
 			//if (device.GetPressDown (SteamVR_Controller.ButtonMask.Trigger)) {
-			if (hand.controller.GetPressDown (Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger)) {
-				IgEvent IE = GameObject.Find ("IgEvent").GetComponent<IgEvent> ();
-				IE.StartAnim ();
-			}
 
-			if (hand.controller.GetPressDown (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+			if (hand.controller.GetTouch (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
 				IgEvent IE = GameObject.Find ("IgEvent").GetComponent<IgEvent> ();
 				IE.StopAnim ();
 				touchpad = hand.controller.GetAxis (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
@@ -32,7 +28,12 @@ namespace Valve.VR.InteractionSystem
 				IE.SetCurrentFrame (t);
 				//Debug.Log(t);
 			}
-			/*
+			if (hand.controller.GetTouchUp (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+				IgEvent IE = GameObject.Find ("IgEvent").GetComponent<IgEvent> ();
+				IE.StartAnim ();
+			}
+
+		/*
 		*if (device.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)){
 		*	EventSpawner ES = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 		*	ES.IncRun ();
