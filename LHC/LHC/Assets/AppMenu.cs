@@ -12,8 +12,8 @@ namespace Valve.VR.InteractionSystem
 
 		void Awake ()
 		{
-			canvasHolder = GameObject.Find ("Player").transform.FindChild ("FollowHead").transform.FindChild ("CanvasHolder");
 			canvas = GameObject.Find ("Canvas");
+			canvasHolder = GameObject.Find ("CanvasHolder").transform;
 		}
 
 		void HandAttachedUpdate (Hand hand)
