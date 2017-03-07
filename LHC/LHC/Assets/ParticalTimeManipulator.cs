@@ -5,33 +5,76 @@ namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
 	[RequireComponent (typeof(Interactable))]
-	//[RequireComponent(typeof(SteamVR_TrackedObject))]
 	public class ParticalTimeManipulator : MonoBehaviour
 	{
-
-		//SteamVR_TrackedObject trackedObj;
 		Vector2 touchpad;
+		int mode = 0;
+		float buttonSize = 0.1f;
+		int currentFrame = 0;
+		bool isPaused = false;
+		IgEvent IE;
 
-		//void Update () {
 		void HandAttachedUpdate (Hand hand)
 		{
-			//var device = SteamVR_Controller.Input((int)trackedObj.index);
+			IE = GameObject.Find ("IgEvent").GetComponent<IgEvent> ();
+			int fps = IE.GetFPS ();
+			touchpad = hand.controller.GetAxis ();
+			//float midDist = Vector2.Distance (Vector2.zero, touchpad);
+			float topDist = Vector2.Distance (new Vector2(0,1-buttonSize), touchpad);
+			float botDist = Vector2.Distance (new Vector2(0,-1+buttonSize), touchpad);
+			//float rightDist = Vector2.Distance (new Vector2(0,1-buttonSize), touchpad);
+			//float leftDist = Vector2.Distance (new Vector2(0,-1+buttonSize), touchpad);
 
-			//if (device.GetPressDown (SteamVR_Controller.ButtonMask.Trigger)) {
+			//switch mode by pressing the top button
+			if (hand.controller.GetPress (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+				if (-buttonSize < topDist && topDist < buttonSize) {
+					if (mode < 1) {
+						mode++;
+					} else {
+						mode = 0;
+					}
+				}
+			}
 
-			if (hand.controller.GetTouch (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
-				IgEvent IE = GameObject.Find ("IgEvent").GetComponent<IgEvent> ();
-				IE.StopAnim ();
-				touchpad = hand.controller.GetAxis (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
-				int fps = IE.GetFPS ();
-				int t = (int)(((touchpad.x + 1f) / 2f) * fps);
-				IE.SetCurrentFrame (t);
-				//Debug.Log(t);
+			if (mode == 0) {
+				if (hand.controller.GetPress (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+					if (-buttonSize > touchpad.x) {
+						if (currentFrame - 1 >= 0) {
+							currentFrame -= 1;
+							int t = currentFrame;
+							IE.SetCurrentFrame (t);
+							if(!isPaused){
+								TogglePause ();
+							}
+						}
+					}else if (touchpad.x > buttonSize) {
+						if (currentFrame + 1 <= fps) {
+							currentFrame += 1;
+							int t = currentFrame;
+							IE.SetCurrentFrame (t);
+							if(!isPaused){
+								TogglePause ();
+							}
+						}
+					}
+				}
+			}else if (mode == 1) {
+				if (hand.controller.GetTouch (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+					if(-1+buttonSize+buttonSize < touchpad.y && touchpad.y < 1-buttonSize-buttonSize){
+						int t = (int)(((touchpad.x + 1f) / 2f) * fps);
+						IE.SetCurrentFrame (t);
+						//Debug.Log(t);
+					}
+				}
 			}
-			if (hand.controller.GetTouchUp (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
-				IgEvent IE = GameObject.Find ("IgEvent").GetComponent<IgEvent> ();
-				IE.StartAnim ();
+				
+			//on pressing the pause button, toggle pause
+			if (hand.controller.GetPress (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+				if (-buttonSize < botDist && botDist < buttonSize) {
+					TogglePause ();
+				}
 			}
+
 
 		/*
 		*if (device.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)){
@@ -44,5 +87,16 @@ namespace Valve.VR.InteractionSystem
 		*}
 		*/
 		}
+
+		void TogglePause(){
+			isPaused = !isPaused;
+			if (isPaused) {
+				IE.StopAnim ();
+			} else {
+				IE.StartAnim ();
+			}
+		}
+
+
 	}
 }
