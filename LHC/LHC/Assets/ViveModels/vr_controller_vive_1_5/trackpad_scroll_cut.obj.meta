@@ -13,7 +13,7 @@ ModelImporter:
     3300000: track_pad_scrollcut_group1
     4300000: track_pad_scrollcut_group1
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
