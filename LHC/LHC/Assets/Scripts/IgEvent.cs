@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
+using System;
 using UnityEngine.UI;
 
 //[System.Serializable]
@@ -148,15 +149,18 @@ public class IgEvent : MonoBehaviour{
 	}
 
 	public void PushInfoToCanvas (int runNumber,int eventNumber,int lsNumber,int orbitNumber,int bxNumber,string eventTime,string eventLocalTime){
-		GameObject eventInformationCanvas = GameObject.Find ("EventInformationCanvas");
+		try{
+			GameObject eventInformationCanvas = GameObject.Find ("EventInformationCanvas");
 
-		eventInformationCanvas.transform.FindChild ("RunNumber").GetComponent<Text> ().text = runNumber.ToString();
-		eventInformationCanvas.transform.FindChild ("EventNumber").GetComponent<Text> ().text = eventNumber.ToString();
-		eventInformationCanvas.transform.FindChild ("EventTime").GetComponent<Text> ().text = eventTime;
-		//eventInformationCanvas.transform.FindChild ("EventLocalTime").GetComponent<Text> ().text = eventLocalTime;
-		//eventInformationCanvas.transform.FindChild ("LsNumber").GetComponent<Text> ().text = lsNumber.ToString();
-		//eventInformationCanvas.transform.FindChild ("OrbitNumber").GetComponent<Text> ().text = orbitNumber.ToString();
-		//eventInformationCanvas.transform.FindChild ("BxNumber").GetComponent<Text> ().text = bxNumber.ToString();
+			eventInformationCanvas.transform.FindChild ("RunNumber").GetComponent<Text> ().text = runNumber.ToString();
+			eventInformationCanvas.transform.FindChild ("EventNumber").GetComponent<Text> ().text = eventNumber.ToString();
+			eventInformationCanvas.transform.FindChild ("EventTime").GetComponent<Text> ().text = eventTime;
+			//eventInformationCanvas.transform.FindChild ("EventLocalTime").GetComponent<Text> ().text = eventLocalTime;
+			//eventInformationCanvas.transform.FindChild ("LsNumber").GetComponent<Text> ().text = lsNumber.ToString();
+			//eventInformationCanvas.transform.FindChild ("OrbitNumber").GetComponent<Text> ().text = orbitNumber.ToString();
+			//eventInformationCanvas.transform.FindChild ("BxNumber").GetComponent<Text> ().text = bxNumber.ToString();
+		}
+		catch(NullReferenceException e){}
 	}
 
 	public bool parseExtras(FileInfo eventInfo){
