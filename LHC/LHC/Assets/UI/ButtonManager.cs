@@ -7,8 +7,8 @@ namespace Valve.VR.InteractionSystem
 	public class ButtonManager : MonoBehaviour
 	{
 
-		//Button btn;
-		UIElement btn;
+		Button btn;
+		//UIElement btn;
 		EventSpawner EvSpa;
 		igLister igLstr;
 		//public bool isEvent;
@@ -17,8 +17,8 @@ namespace Valve.VR.InteractionSystem
 		{
 			EvSpa = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 			igLstr = transform.GetComponentInParent<igLister> ();
-			//btn = gameObject.GetComponent<Button>();
-			btn = gameObject.GetComponent<UIElement> ();
+			btn = gameObject.GetComponent<Button>();
+			//btn = gameObject.GetComponent<UIElement> ();
 			/*
 			if (btn.name.Equals ("Back")) {
 				btn.onClick.AddListener (GoBack);
