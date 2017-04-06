@@ -9,7 +9,7 @@ namespace Valve.VR.InteractionSystem
 	{
 		Vector2 touchpad;
 		int mode = 0;
-		float buttonSize = 0.1f;
+		float buttonSize = 0.2f;
 		int currentFrame = 0;
 		bool isPaused = false;
 		IgEvent IE;
@@ -26,7 +26,7 @@ namespace Valve.VR.InteractionSystem
 			//float leftDist = Vector2.Distance (new Vector2(0,-1+buttonSize), touchpad);
 
 			//switch mode by pressing the top button
-			if (hand.controller.GetPress (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+			if (hand.controller.GetPressDown (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
 				if (-buttonSize < topDist && topDist < buttonSize) {
 					if (mode < 1) {
 						mode++;
@@ -69,7 +69,7 @@ namespace Valve.VR.InteractionSystem
 			}
 				
 			//on pressing the pause button, toggle pause
-			if (hand.controller.GetPress (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+			if (hand.controller.GetPressDown (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
 				if (-buttonSize < botDist && botDist < buttonSize) {
 					TogglePause ();
 				}
