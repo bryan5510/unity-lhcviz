@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
+using UnityEngine.UI;
 
 //[System.Serializable]
 public class IgEvent : MonoBehaviour{
@@ -119,7 +120,49 @@ public class IgEvent : MonoBehaviour{
 		}
 	}*/
 
+	public void ParseEventInfo (FileInfo eventInfo){
+		string eventFile = File.ReadAllText(eventInfo.FullName);
+		int tracksLoc = eventFile.IndexOf ("Collections");
+		eventFile = eventFile.Substring (tracksLoc);
+		//"Event_V2": [["run", "int"],["event", "int"],["ls", "int"],["orbit", "int"],["bx", "int"],["time", "string"],["localtime", "string"]],
+		//"Collections": {"Event_V2": [[146436, 90625265, 322, 84148692, 910, "2010-Sep-22 21:25:46.221672 GMT", "Wed Sep 22 16:25:46 2010 CDT"]],
+		tracksLoc = eventFile.IndexOf ("Event_V");
+		eventFile = eventFile.Substring (tracksLoc);
+		tracksLoc = eventFile.IndexOf (":");
+		eventFile = eventFile.Substring (tracksLoc);
+		int tracksEnd = eventFile.IndexOf ("\"]");
+		eventFile = eventFile.Substring (4,tracksEnd-3);
+		//Debug.Log (eventFile);
+		string[] eventParts = eventFile.Split (new char[]{','});
+
+		int runNumber = int.Parse(eventParts [0]);
+		int eventNumber = int.Parse(eventParts [1].Substring(1));
+		int lsNumber = int.Parse(eventParts [2].Substring(1));
+		int orbitNumber = int.Parse(eventParts [3].Substring(1));
+		int bxNumber = int.Parse(eventParts [4].Substring(1));
+		string eventTime = eventParts[5].Substring(2,eventParts[5].LastIndexOf("\"")-2);
+		string eventLocalTime = eventParts[6].Substring(2,eventParts[6].LastIndexOf("\"")-2);
+
+		PushInfoToCanvas (runNumber,eventNumber,lsNumber,orbitNumber,bxNumber,eventTime,eventLocalTime);
+
+	}
+
+	public void PushInfoToCanvas (int runNumber,int eventNumber,int lsNumber,int orbitNumber,int bxNumber,string eventTime,string eventLocalTime){
+		GameObject eventInformationCanvas = GameObject.Find ("EventInformationCanvas");
+
+		eventInformationCanvas.transform.FindChild ("RunNumber").GetComponent<Text> ().text = runNumber.ToString();
+		eventInformationCanvas.transform.FindChild ("EventNumber").GetComponent<Text> ().text = eventNumber.ToString();
+		eventInformationCanvas.transform.FindChild ("EventTime").GetComponent<Text> ().text = eventTime;
+		//eventInformationCanvas.transform.FindChild ("EventLocalTime").GetComponent<Text> ().text = eventLocalTime;
+		//eventInformationCanvas.transform.FindChild ("LsNumber").GetComponent<Text> ().text = lsNumber.ToString();
+		//eventInformationCanvas.transform.FindChild ("OrbitNumber").GetComponent<Text> ().text = orbitNumber.ToString();
+		//eventInformationCanvas.transform.FindChild ("BxNumber").GetComponent<Text> ().text = bxNumber.ToString();
+	}
+
 	public bool parseExtras(FileInfo eventInfo){
+
+		ParseEventInfo (eventInfo);
+
 		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
 		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 
 		string eventFile = File.ReadAllText(eventInfo.FullName);

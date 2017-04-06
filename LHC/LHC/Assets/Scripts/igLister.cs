@@ -20,13 +20,13 @@ public class igLister : MonoBehaviour {
 		content.GetComponent<RectTransform> ().localPosition = Vector3.zero;
 		EvSpa = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 	}
-
+	/*
 	void Update () {
 		if(Input.GetKeyDown(KeyCode.P)){
 			ShowRuns ();
 		}
 		//handle.transform.GetComponent<BoxCollider>().size = new Vector3(20f, 20f + (240f * scrollbar.size), 1f);
-	}
+	}*/
 
 	void PoputlateList(FileInfo[] files, Object buttonPrefab){
 		Transform[] buttons = content.transform.GetComponentsInChildren<Transform> ();

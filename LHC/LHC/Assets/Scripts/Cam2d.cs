@@ -5,6 +5,7 @@ public class Cam2d : MonoBehaviour {
 
 	public GameObject canvas;
 	float speed = 10;
+	float speedMode = 10;
 	Vector3 startingRot;
 	bool isAutoScrolling = true;
 
@@ -17,7 +18,7 @@ public class Cam2d : MonoBehaviour {
 		isAutoScrolling = shouldScroll;
 		if (isAutoScrolling) {
 			transform.eulerAngles = new Vector3(0,transform.eulerAngles.y,0);
-			speed = 10;
+			speed = speedMode;
 		} else {
 			speed = 40;
 		}
@@ -36,6 +37,20 @@ public class Cam2d : MonoBehaviour {
 		}
 		float y = 0;
 		float z = 0;
+
+		if(Input.GetKeyDown(KeyCode.Alpha1)){
+			speedMode = 5;
+			autoScrollToggle (true);
+		}if(Input.GetKeyDown(KeyCode.Alpha2)){
+			speedMode = 10;
+			autoScrollToggle (true);
+		}if(Input.GetKeyDown(KeyCode.Alpha3)){
+			speedMode = 20;
+			autoScrollToggle (true);
+		}if(Input.GetKeyDown(KeyCode.Alpha4)){
+			speedMode = 30;
+			autoScrollToggle (true);
+		}
 
 		if(Input.GetKey(KeyCode.W)){
 			z--;
