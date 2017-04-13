@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.IO;
@@ -17,10 +18,16 @@ public class EventSpawner : MonoBehaviour {
 	public GameObject dotShape;
 	public Material mat;
 
+	public Button autoLoopButton;
+
 	void Start () {
 		igFolder = new DirectoryInfo ("Data\\igFiles");
 		Reset ();
 		SwapRun (0);
+		ColorBlock cb = autoLoopButton.colors;
+		cb.normalColor = Color.red;
+		cb.highlightedColor = new Color(1f,0.2f,0.2f);
+		autoLoopButton.colors = cb;
 	}
 
 	public void Reset(){
@@ -42,15 +49,6 @@ public class EventSpawner : MonoBehaviour {
 		return eventFiles;
 	}
 
-	void SwapRun(int i){
-		if(i >= 0 && i < runFolders.Length){
-			currentRun = i;
-			currentEvent = 0;
-			eventFiles = runFolders[i].GetFiles();
-			SwapEvent (currentEvent);
-		}
-	}
-
 	void UnzipAll(){
 		foreach(FileInfo ig in igFiles){
 			Unzip (ig);
@@ -69,19 +67,21 @@ public class EventSpawner : MonoBehaviour {
 		return Path.GetFileNameWithoutExtension (i.ToString());
 	}
 
-	void CreateEvent(FileInfo i){
+	bool CreateEvent(FileInfo i){
 		DeleteAllEvents ();
 		GameObject igEventObj = new GameObject ();
 		igEventObj.name = "IgEvent";
+		igEventObj.tag = "IgEvent";
 		IgEvent ige = igEventObj.AddComponent<IgEvent> ();
 		ige.dotShape = dotShape;
 		ige.mat = mat;
-		ige.parseExtras (i);
+		return ige.parseExtras (i);
 	}
 
 	void DeleteAllEvents(){
-		if(GameObject.Find ("IgEvent")){
-			Destroy (GameObject.Find ("IgEvent"));
+		GameObject[] gos = GameObject.FindGameObjectsWithTag ("IgEvent");
+		for(int i = 0; i < gos.Length; i++){
+			Destroy (gos[i]);
 		}
 	}
 
@@ -96,48 +96,84 @@ public class EventSpawner : MonoBehaviour {
 			Reset ();
 		}
 	}
+		
+	public float invokeDelay = 3;
+	void AutoMoveToNextEvent(){
+		if (IncEvent ()) {
+			Invoke ("AutoMoveToNextEvent", invokeDelay);
+		}else{
+			Invoke ("AutoMoveToNextEvent", 0.5f);
+		}
+	}
+		
+	public void ToggleAutoMoveToNext(){
+		if (IsInvoking ("AutoMoveToNextEvent")) {
+			CancelInvoke ("AutoMoveToNextEvent");
+			ColorBlock cb = autoLoopButton.colors;
+			cb.normalColor = Color.red;
+			cb.highlightedColor = new Color(1f,0.2f,0.2f);
+			autoLoopButton.colors = cb;
+		} else {
+			Invoke ("AutoMoveToNextEvent",invokeDelay);
+			ColorBlock cb = autoLoopButton.colors;
+			cb.normalColor = Color.green;
+			cb.highlightedColor = new Color(0.2f,1f,0.2f);
+			autoLoopButton.colors = cb;
+		}
+	}
 
-	public void IncEvent(){
+	public bool IncEvent(){
 		if (currentEvent + 1 < eventFiles.Length) {
 			currentEvent++;
 		} else {
 			currentEvent = 0;
 		}
-		SwapEvent (currentEvent);
+		return SwapEvent (currentEvent);
 	}
 
-	public void IncRun(){
+	public bool IncRun(){
 		if (currentRun + 1 < runFolders.Length) {
 			currentRun++;
 		} else {
 			currentRun = 0;
 		}
-		SwapRun (currentRun);
+		return SwapRun (currentRun);
 	}
 
-	public void SwapEvent(int eventNum){
+	public bool SwapEvent(int eventNum){
 		if(eventNum < eventFiles.Length && eventNum >= 0){
-			CreateEvent (eventFiles [eventNum]);
+			return CreateEvent (eventFiles [eventNum]);
 		}
+		return false;
 	}
 
-	public void SetEvent(String buttonName){
+	public bool SwapRun(int i){
+		if(i >= 0 && i < runFolders.Length){
+			currentRun = i;
+			currentEvent = 0;
+			eventFiles = runFolders[i].GetFiles();
+			return SwapEvent (currentEvent);
+		}
+		return false;
+	}
+
+	public bool SetEvent(String buttonName){
 		for(int i = 0; i < eventFiles.Length; i++){
 			if(eventFiles[i].Name.Equals(buttonName)){
 				currentEvent = i;
-				SwapEvent (currentEvent);
-				return;
+				return SwapEvent (currentEvent);
 			}
 		}
+		return false;
 	}
 
-	public void SetRun(String buttonName){
+	public bool SetRun(String buttonName){
 		for(int i = 0; i < igFiles.Length; i++){
 			if(igFiles[i].Name.Equals(buttonName)){
-				SwapRun (i);
-				return;
+				return SwapRun (i);
 			}
 		}
+		return false;
 	}
 
 }
