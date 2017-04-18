@@ -6,12 +6,12 @@ public class Cam2d : MonoBehaviour {
 	public GameObject canvas;
 	float speed = 10;
 	float speedMode = 10;
-	Vector3 startingRot;
+	//Vector3 startingRot;
 	bool isAutoScrolling = true;
 
 	void Start () {
 		canvas.SetActive (true);
-		startingRot = transform.eulerAngles;
+		//startingRot = transform.eulerAngles;
 	}
 
 	void autoScrollToggle(bool shouldScroll){
@@ -22,6 +22,37 @@ public class Cam2d : MonoBehaviour {
 		} else {
 			speed = 40;
 		}
+	}
+
+	public Camera c;
+	Vector3 mpOld = Vector3.zero;
+	Vector3 mpNew = Vector3.zero;
+	void FixedUpdate(){
+		if(Input.GetMouseButtonDown(0)){
+			RaycastHit hit;
+			Ray r = c.ScreenPointToRay(new Vector3(Input.mousePosition.x,Input.mousePosition.y,0));
+			if (Physics.Raycast(r,out hit)) {
+				if (hit.collider.name == "turningSphere") {
+					autoScrollToggle (false);
+					mpOld = Input.mousePosition;
+				}
+			}
+		}if(Input.GetMouseButton(0)){
+			RaycastHit hit;
+			Ray r = c.ScreenPointToRay(new Vector3(Input.mousePosition.x,Input.mousePosition.y,0));
+			if (Physics.Raycast(r,out hit)) {
+				if (hit.collider.name == "turningSphere") {
+					mpNew = Input.mousePosition;
+					float x = mpNew.x - mpOld.x;
+					float y = mpNew.y - mpOld.y;
+					float z = mpNew.z - mpOld.z;
+					transform.Rotate (0,x,y);
+				}
+			}
+			mpOld = mpNew;
+		}
+
+		//Debug.DrawRay (r.origin, r.direction * 10, Color.yellow);
 	}
 
 	void Update () {
