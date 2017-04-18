@@ -82,7 +82,7 @@ public class IgEvent : MonoBehaviour{
 
 	void UpdateLine(int i){
 		LineRenderer lr = tracks[i].GetComponent<LineRenderer>();
-		lr.SetVertexCount (currentFrame);
+		lr.numPositions = currentFrame;//.SetVertexCount (currentFrame);
 		Vector3[] LRthisTrack = GetTrack (i,currentFrame);
 		lr.SetPositions (LRthisTrack);
 	}
@@ -160,7 +160,7 @@ public class IgEvent : MonoBehaviour{
 			//eventInformationCanvas.transform.FindChild ("OrbitNumber").GetComponent<Text> ().text = orbitNumber.ToString();
 			//eventInformationCanvas.transform.FindChild ("BxNumber").GetComponent<Text> ().text = bxNumber.ToString();
 		}
-		catch(NullReferenceException e){}
+		catch{}
 	}
 
 	public bool parseExtras(FileInfo eventInfo){
@@ -246,10 +246,11 @@ public class IgEvent : MonoBehaviour{
 			}
 
 			LineRenderer lr = curve.AddComponent<LineRenderer>();
-			lr.SetVertexCount (fps+1);
+			lr.numPositions = fps + 1;//.SetVertexCount (fps+1);
 			Vector3[] LRthisTrack = GetTrack (i,fps+1);
 			lr.SetPositions (LRthisTrack);
-			lr.SetWidth (0.01f, 0.01f);
+			lr.startWidth = 0.01f;
+			lr.endWidth = 0.01f;//.SetWidth (0.01f, 0.01f);
 			lr.material = mat;
 
 			trks [i] = curve;
