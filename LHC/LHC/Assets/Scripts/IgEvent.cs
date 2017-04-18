@@ -32,7 +32,8 @@ public class IgEvent : MonoBehaviour{
 		return fps;
 	}
 
-	void Update(){
+	int direction = 1;
+	void FixedUpdate(){
 		if(Input.GetKey(KeyCode.LeftArrow)){
 			stopAnim = true;
 			MoveDots (-1);
@@ -44,9 +45,16 @@ public class IgEvent : MonoBehaviour{
 		if(Input.GetKeyUp(KeyCode.LeftArrow)||Input.GetKeyUp(KeyCode.RightArrow)){
 			stopAnim = false;
 		}
+
+		if (!stopAnim) {
+			if (!MoveDots (direction)) {
+				direction *= -1;
+			}
+		}
+
 	}
 
-
+	/*
 	IEnumerator AnimateDots(){
 		int direction = 1;
 		while (true) {
@@ -57,7 +65,7 @@ public class IgEvent : MonoBehaviour{
 			}
 			yield return new WaitForSeconds (Time.deltaTime/2);
 		}
-	}
+	}*/
 
 	bool MoveDots(int c){
 		if (currentFrame + c >= 0 && currentFrame + c <= fps) {
@@ -260,7 +268,7 @@ public class IgEvent : MonoBehaviour{
 		foreach(GameObject track in tracks){
 			track.transform.SetParent (transform);
 		}
-		StartCoroutine (AnimateDots ());
+		//StartCoroutine (AnimateDots ());
 		return true;
 	}
 

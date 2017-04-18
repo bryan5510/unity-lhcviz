@@ -4,8 +4,8 @@ using System.Collections;
 public class Cam2d : MonoBehaviour {
 
 	public GameObject canvas;
-	float speed = 10;
-	float speedMode = 10;
+	float speed = 0.25f;
+	float speedMode = 0.25f;
 	//Vector3 startingRot;
 	bool isAutoScrolling = true;
 
@@ -20,7 +20,7 @@ public class Cam2d : MonoBehaviour {
 			transform.eulerAngles = new Vector3(0,transform.eulerAngles.y,0);
 			speed = speedMode;
 		} else {
-			speed = 40;
+			speed = 1;
 		}
 	}
 
@@ -43,19 +43,18 @@ public class Cam2d : MonoBehaviour {
 			if (Physics.Raycast(r,out hit)) {
 				if (hit.collider.name == "turningSphere") {
 					mpNew = Input.mousePosition;
-					float x = mpNew.x - mpOld.x;
-					float y = mpNew.y - mpOld.y;
-					float z = mpNew.z - mpOld.z;
-					transform.Rotate (0,x,y);
+					float xAngle = mpNew.x - mpOld.x;
+					float yAngle = mpNew.y - mpOld.y;
+					transform.Rotate (0,xAngle,yAngle);
 				}
 			}
 			mpOld = mpNew;
 		}
 
-		//Debug.DrawRay (r.origin, r.direction * 10, Color.yellow);
-	}
+		if(50 < c.fieldOfView-Input.mouseScrollDelta.y && c.fieldOfView-Input.mouseScrollDelta.y < 110){
+			c.fieldOfView -= Input.mouseScrollDelta.y;
+		}
 
-	void Update () {
 		if(Input.GetKeyDown(KeyCode.Space)){
 			if (!isAutoScrolling) {
 				autoScrollToggle (true);
@@ -70,16 +69,16 @@ public class Cam2d : MonoBehaviour {
 		float z = 0;
 
 		if(Input.GetKeyDown(KeyCode.Alpha1)){
-			speedMode = 5;
+			speedMode = 0.1f;
 			autoScrollToggle (true);
 		}if(Input.GetKeyDown(KeyCode.Alpha2)){
-			speedMode = 10;
+			speedMode = 0.25f;
 			autoScrollToggle (true);
 		}if(Input.GetKeyDown(KeyCode.Alpha3)){
-			speedMode = 20;
+			speedMode = 0.5f;
 			autoScrollToggle (true);
 		}if(Input.GetKeyDown(KeyCode.Alpha4)){
-			speedMode = 30;
+			speedMode = 0.75f;
 			autoScrollToggle (true);
 		}
 
@@ -104,7 +103,7 @@ public class Cam2d : MonoBehaviour {
 			y = 1;
 		}
 
-		transform.Rotate (new Vector3(0,y,z) * Time.deltaTime * speed);
+		transform.Rotate (new Vector3(0,y,z) * speed);
 		transform.eulerAngles = new Vector3(0,transform.eulerAngles.y,transform.eulerAngles.z);
 	}
 }

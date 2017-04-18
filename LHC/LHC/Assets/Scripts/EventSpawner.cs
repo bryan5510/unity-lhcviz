@@ -85,7 +85,7 @@ public class EventSpawner : MonoBehaviour {
 		}
 	}
 
-	void Update () {
+	void FixedUpdate () {
 		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
 			IncEvent ();
 		}

@@ -42,7 +42,7 @@ public class TrackMovement : MonoBehaviour {
 		//StartCoroutine (AnimateDots ());
 	}
 
-	void Update(){
+	void FixedUpdate(){
 		if(Input.GetKey(KeyCode.LeftArrow)){
 			MoveDots (-1);
 		}
