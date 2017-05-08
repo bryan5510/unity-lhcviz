@@ -4,17 +4,18 @@ using System.IO;
 using System;
 using UnityEngine.UI;
 
-//[System.Serializable]
 public class IgEvent : MonoBehaviour{
 
 	public GameObject dotShape;
 	public Material mat;
+	public Material proton;
+	public Material electron;
 
 	GameObject[] tracks;
 	int currentFrame = 0;
-	int fps = 90;
-	Vector3[,] LRpoints;
-	bool stopAnim = false;
+	public int fps = 90;
+	public Vector3[,] LRpoints;
+	public bool stopAnim = false;
 
 	public void StartAnim(){
 		stopAnim = false;
@@ -25,58 +26,24 @@ public class IgEvent : MonoBehaviour{
 
 	public void SetCurrentFrame(int t){
 		currentFrame = t;
-		MoveDots (0);
+		EventManager.TriggerEvent ("UpdateDots");
 	}
 
 	public int GetFPS(){
 		return fps;
 	}
 
-	int direction = 1;
 	void FixedUpdate(){
 		if(Input.GetKey(KeyCode.LeftArrow)){
 			stopAnim = true;
-			MoveDots (-1);
+			EventManager.TriggerEvent ("MoveDotsBack");
 		}
 		if(Input.GetKey(KeyCode.RightArrow)){
 			stopAnim = true;
-			MoveDots (1);
+			EventManager.TriggerEvent ("MoveDotsForward");
 		}
 		if(Input.GetKeyUp(KeyCode.LeftArrow)||Input.GetKeyUp(KeyCode.RightArrow)){
 			stopAnim = false;
-		}
-
-		if (!stopAnim) {
-			if (!MoveDots (direction)) {
-				direction *= -1;
-			}
-		}
-
-	}
-
-	/*
-	IEnumerator AnimateDots(){
-		int direction = 1;
-		while (true) {
-			if (!stopAnim) {
-				if (!MoveDots (direction)) {
-					direction *= -1;
-				}
-			}
-			yield return new WaitForSeconds (Time.deltaTime/2);
-		}
-	}*/
-
-	bool MoveDots(int c){
-		if (currentFrame + c >= 0 && currentFrame + c <= fps) {
-			currentFrame += c;
-			for (int i = 0; i < tracks.Length; i++) {//for each track per frame
-				tracks [i].transform.GetChild(0).position = tracks[i].GetComponent<BezierSpline>().GetPoint((currentFrame*1f)/(fps*1f));
-				UpdateLine (i);
-			}
-			return true;
-		} else {
-			return false;
 		}
 	}
 
@@ -88,54 +55,42 @@ public class IgEvent : MonoBehaviour{
 		return LRthisTrack;
 	}
 
-	void UpdateLine(int i){
-		LineRenderer lr = tracks[i].GetComponent<LineRenderer>();
-		lr.numPositions = currentFrame;//.SetVertexCount (currentFrame);
-		Vector3[] LRthisTrack = GetTrack (i,currentFrame);
-		lr.SetPositions (LRthisTrack);
-	}
-	/*
-	void parseTracks(string eventName){
-		string eventFile = File.ReadAllText("Assets\\ispy-webgl-master\\data\\Electron\\Events\\Run_146644\\" + eventName);
-		int tracksLoc = eventFile.IndexOf ("Collections");
-		eventFile = eventFile.Substring (tracksLoc);
-		tracksLoc = eventFile.IndexOf ("Tracks_V");
+	int[] ParseTracks(string eventFile, string trkLocName, int trkIndex){
+		int tracksLoc = eventFile.IndexOf (trkLocName);
 		eventFile = eventFile.Substring (tracksLoc);
 		tracksLoc = eventFile.IndexOf (":");
 		eventFile = eventFile.Substring (tracksLoc);
 		int tracksEnd = eventFile.IndexOf ("\"");
 		eventFile = eventFile.Substring (3,tracksEnd-10);
 		string[] lines = eventFile.Split ("\n"[0]);
+		int[] charge = new int[lines.Length];
 		for(int i = 0; i < lines.Length; i++){
-			//[[0.000924736, 0.000185603, -0.0215063], [-0.426364, -0.346344, -0.835619], 0.962035, -2.45938, -1.20648, 1, 15.2759, 11], 
-			//Debug.Log (lines[i]);
-			lines[i] = lines[i].Substring(2);
-			tracksEnd = lines[i].IndexOf ("]");
-			string pos = lines[i].Substring (0,tracksEnd);
-			tracksEnd = lines[i].IndexOf ("[");
-			lines[i] = lines[i].Substring(tracksEnd);
-			tracksEnd = lines[i].IndexOf ("]");
-			string dir = lines[i].Substring (1,tracksEnd-1);
-			lines[i] = lines[i].Substring(tracksEnd+2);
-			tracksEnd = lines[i].IndexOf ("]");
-			lines [i] = lines [i].Substring (0, tracksEnd);
-			string text = pos + "," + dir + "," + lines [i];
-			string[] remaining = text.Split (","[0]);
-			float[] values = new float[remaining.Length];
-			for(int j=0; j < remaining.Length; j++){
-				values [j] = float.Parse (remaining[j]);
-				//Debug.Log (values[j]);
-			}
-		}
-	}*/
+			// "Tracks_V3": [["pos", "v3d"],["dir", "v3d"],["pt", "double"],["phi", "double"],["eta", "double"],["charge", "int"],["chi2", "double"],["ndof", "double"]]
+			// "Tracks_V3": [[[0.000924736, 0.000185603, -0.0215063], [-0.426364, -0.346344, -0.835619], 0.962035, -2.45938, -1.20648, 1, 15.2759, 11], 
+			string[] values = lines [i].Split (","[0]);
+			values[trkIndex] = values[trkIndex].Substring(1);
+			charge[i] = int.Parse(values [trkIndex]);
 
-	public void ParseEventInfo (FileInfo eventInfo){
-		string eventFile = File.ReadAllText(eventInfo.FullName);
-		int tracksLoc = eventFile.IndexOf ("Collections");
-		eventFile = eventFile.Substring (tracksLoc);
+		}
+		return charge;
+	}
+
+	int[] ParseCharge(string eventFile){
+		int[] x;
+		try{
+			x = ParseTracks(eventFile, "\"Tracks_V", 9);
+		}catch{
+			Debug.Log ("No charge in event.");
+			return null;
+		}
+		return x;
+
+	}
+
+	public void ParseEventInfo (string eventFile){
 		//"Event_V2": [["run", "int"],["event", "int"],["ls", "int"],["orbit", "int"],["bx", "int"],["time", "string"],["localtime", "string"]],
 		//"Collections": {"Event_V2": [[146436, 90625265, 322, 84148692, 910, "2010-Sep-22 21:25:46.221672 GMT", "Wed Sep 22 16:25:46 2010 CDT"]],
-		tracksLoc = eventFile.IndexOf ("Event_V");
+		int tracksLoc = eventFile.IndexOf ("Event_V");
 		eventFile = eventFile.Substring (tracksLoc);
 		tracksLoc = eventFile.IndexOf (":");
 		eventFile = eventFile.Substring (tracksLoc);
@@ -172,14 +127,15 @@ public class IgEvent : MonoBehaviour{
 	}
 
 	public bool parseExtras(FileInfo eventInfo){
-
-		ParseEventInfo (eventInfo);
-
-		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
-		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 
 		string eventFile = File.ReadAllText(eventInfo.FullName);
 		int tracksLoc = eventFile.IndexOf ("Collections");
 		eventFile = eventFile.Substring (tracksLoc);
+		
+		int[] charge = ParseCharge (eventFile);
+		ParseEventInfo (eventFile);
+
+		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
+		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 
 		tracksLoc = eventFile.IndexOf ("Extras_V");
 		eventFile = eventFile.Substring (tracksLoc);
 		tracksLoc = eventFile.IndexOf (":");
@@ -248,18 +204,30 @@ public class IgEvent : MonoBehaviour{
 			bs.SetAllControlPoints (p1,p3,p4,p2);
 			bs.MakeSpline(1,new Transform[1] {dotShape.transform});
 
-			//Vector3[] LRpoints = new Vector3[fps + 1];
 			for(int j = 0; j < fps + 1; j++){
 				LRpoints [i,j] = bs.GetPoint ((j*1f)/(fps*1f));
 			}
 
 			LineRenderer lr = curve.AddComponent<LineRenderer>();
-			lr.numPositions = fps + 1;//.SetVertexCount (fps+1);
+			lr.numPositions = fps + 1;
 			Vector3[] LRthisTrack = GetTrack (i,fps+1);
 			lr.SetPositions (LRthisTrack);
 			lr.startWidth = 0.01f;
-			lr.endWidth = 0.01f;//.SetWidth (0.01f, 0.01f);
+			lr.endWidth = 0.01f;
 			lr.material = mat;
+
+			if (charge != null) {
+				try{
+					if (charge [i] > 0) {
+						curve.transform.GetChild (0).GetComponent<MeshRenderer> ().material = proton;
+					} else if (charge [i] < 0) {
+						curve.transform.GetChild (0).GetComponent<MeshRenderer> ().material = electron;
+					}
+				}catch{
+				}
+			}
+
+			curve.AddComponent<TrackMovement> ();
 
 			trks [i] = curve;
 		}
@@ -268,7 +236,6 @@ public class IgEvent : MonoBehaviour{
 		foreach(GameObject track in tracks){
 			track.transform.SetParent (transform);
 		}
-		//StartCoroutine (AnimateDots ());
 		return true;
 	}
 

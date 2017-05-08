@@ -17,6 +17,8 @@ public class EventSpawner : MonoBehaviour {
 
 	public GameObject dotShape;
 	public Material mat;
+	public Material proton;
+	public Material electron;
 
 	public Button autoLoopButton;
 
@@ -75,6 +77,8 @@ public class EventSpawner : MonoBehaviour {
 		IgEvent ige = igEventObj.AddComponent<IgEvent> ();
 		ige.dotShape = dotShape;
 		ige.mat = mat;
+		ige.proton = proton;
+		ige.electron = electron;
 		return ige.parseExtras (i);
 	}
 
