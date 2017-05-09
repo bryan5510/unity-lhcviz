@@ -222,6 +222,8 @@ public class IgEvent : MonoBehaviour{
 						curve.transform.GetChild (0).GetComponent<MeshRenderer> ().material = proton;
 					} else if (charge [i] < 0) {
 						curve.transform.GetChild (0).GetComponent<MeshRenderer> ().material = electron;
+						curve.transform.GetChild (0).localScale = new Vector3(0.04f,0.04f,0.04f);
+						//curve.transform.GetChild (0).localScale = new Vector3(0.000054f,0.000054f,0.000054f);
 					}
 				}catch{
 				}
