@@ -3,16 +3,9 @@ using System.Collections;
 
 public class Cam2d : MonoBehaviour {
 
-	public GameObject canvas;
 	float speed = 0.25f;
 	float speedMode = 0.25f;
-	//Vector3 startingRot;
 	bool isAutoScrolling = true;
-
-	void Start () {
-		canvas.SetActive (true);
-		//startingRot = transform.eulerAngles;
-	}
 
 	void autoScrollToggle(bool shouldScroll){
 		isAutoScrolling = shouldScroll;
@@ -24,10 +17,11 @@ public class Cam2d : MonoBehaviour {
 		}
 	}
 
-	public Camera c;
-	Vector3 mpOld = Vector3.zero;
-	Vector3 mpNew = Vector3.zero;
-	void FixedUpdate(){
+	//public Camera c;
+	//Vector3 mpOld = Vector3.zero;
+	//Vector3 mpNew = Vector3.zero;
+	void Update(){
+		/*
 		if(Input.GetMouseButtonDown(0)){
 			RaycastHit hit;
 			Ray r = c.ScreenPointToRay(new Vector3(Input.mousePosition.x,Input.mousePosition.y,0));
@@ -49,11 +43,11 @@ public class Cam2d : MonoBehaviour {
 				}
 			}
 			mpOld = mpNew;
-		}
+		}*/
 
-		if(50 < c.fieldOfView-Input.mouseScrollDelta.y && c.fieldOfView-Input.mouseScrollDelta.y < 110){
+		/*if(50 < c.fieldOfView-Input.mouseScrollDelta.y && c.fieldOfView-Input.mouseScrollDelta.y < 110){
 			c.fieldOfView -= Input.mouseScrollDelta.y;
-		}
+		}*/
 
 		if(Input.GetKeyDown(KeyCode.Space)){
 			if (!isAutoScrolling) {
@@ -62,9 +56,7 @@ public class Cam2d : MonoBehaviour {
 				autoScrollToggle (false);
 			}
 		}
-		if(Input.GetKeyDown(KeyCode.O) || Input.GetKeyDown(KeyCode.Escape)){
-			canvas.SetActive (!canvas.activeSelf);
-		}
+
 		float y = 0;
 		float z = 0;
 
@@ -103,7 +95,7 @@ public class Cam2d : MonoBehaviour {
 			y = 1;
 		}
 
-		transform.Rotate (new Vector3(0,y,z) * speed);
+		transform.Rotate (new Vector3(0,y,z) * speed * 10 * Time.deltaTime);
 		transform.eulerAngles = new Vector3(0,transform.eulerAngles.y,transform.eulerAngles.z);
 	}
 }

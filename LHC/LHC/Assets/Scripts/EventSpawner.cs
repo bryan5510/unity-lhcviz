@@ -20,16 +20,10 @@ public class EventSpawner : MonoBehaviour {
 	public Material proton;
 	public Material electron;
 
-	public Button autoLoopButton;
-
 	void Start () {
 		igFolder = new DirectoryInfo ("Data\\igFiles");
 		Reset ();
 		SwapRun (0);
-		ColorBlock cb = autoLoopButton.colors;
-		cb.normalColor = Color.red;
-		cb.highlightedColor = new Color(1f,0.2f,0.2f);
-		autoLoopButton.colors = cb;
 	}
 
 	public void Reset(){
@@ -89,7 +83,7 @@ public class EventSpawner : MonoBehaviour {
 		}
 	}
 
-	void FixedUpdate () {
+	void Update () {
 		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
 			IncEvent ();
 		}
@@ -98,31 +92,6 @@ public class EventSpawner : MonoBehaviour {
 		}
 		if(Input.GetKeyDown(KeyCode.R)){
 			Reset ();
-		}
-	}
-		
-	public float invokeDelay = 3;
-	void AutoMoveToNextEvent(){
-		if (IncEvent ()) {
-			Invoke ("AutoMoveToNextEvent", invokeDelay);
-		}else{
-			Invoke ("AutoMoveToNextEvent", 0.5f);
-		}
-	}
-		
-	public void ToggleAutoMoveToNext(){
-		if (IsInvoking ("AutoMoveToNextEvent")) {
-			CancelInvoke ("AutoMoveToNextEvent");
-			ColorBlock cb = autoLoopButton.colors;
-			cb.normalColor = Color.red;
-			cb.highlightedColor = new Color(1f,0.2f,0.2f);
-			autoLoopButton.colors = cb;
-		} else {
-			Invoke ("AutoMoveToNextEvent",invokeDelay);
-			ColorBlock cb = autoLoopButton.colors;
-			cb.normalColor = Color.green;
-			cb.highlightedColor = new Color(0.2f,1f,0.2f);
-			autoLoopButton.colors = cb;
 		}
 	}
 
