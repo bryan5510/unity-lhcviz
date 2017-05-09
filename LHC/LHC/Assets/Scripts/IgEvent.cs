@@ -24,9 +24,13 @@ public class IgEvent : MonoBehaviour{
 		stopAnim = true;
 	}
 
+	//bool secondTime = false;
 	public void SetCurrentFrame(int t){
 		currentFrame = t;
 		EventManager.TriggerEvent ("UpdateDots");
+		//if(!secondTime){
+		EventManager.TriggerEvent ("UpdateLine");
+		//}
 	}
 
 	public int GetFPS(){
@@ -49,7 +53,12 @@ public class IgEvent : MonoBehaviour{
 
 		if (!stopAnim) {
 			if (!MoveDots (direction)) {
-				direction *= -1;
+				//direction *= -1;
+				//if(direction > 0){
+				//secondTime = true;
+				GameObject.Find("CameraCycle").GetComponent<CameraCycler>().CycleOnce();
+				SetCurrentFrame (0);
+				//}
 			}
 		}
 
@@ -59,6 +68,9 @@ public class IgEvent : MonoBehaviour{
 		if (currentFrame + c >= 0 && currentFrame + c <= fps) {
 			currentFrame += c;
 			EventManager.TriggerEvent ("UpdateDots");
+			//if (!secondTime) {
+			EventManager.TriggerEvent ("UpdateLine");
+			//}
 			return true;
 		} else {
 			return false;

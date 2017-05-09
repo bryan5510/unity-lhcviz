@@ -8,14 +8,16 @@ public class TrackMovement : MonoBehaviour {
 	int id;
 	//int currentFrame = 0;
 
-	private UnityAction moveForwardListener;
-	private UnityAction moveBackListener;
-	private UnityAction updateListener;
+	//private UnityAction moveForwardListener;
+	//private UnityAction moveBackListener;
+	private UnityAction updateDotsListener;
+	private UnityAction updateLineListener;
 
 	void Awake(){
 		//moveForwardListener = new UnityAction (MoveDotsForward);
 		//moveBackListener = new UnityAction (MoveDotsBack);
-		updateListener = new UnityAction (UpdateDots);
+		updateDotsListener = new UnityAction (UpdateDots);
+		updateLineListener = new UnityAction (UpdateLine);
 	}
 
 	void Start(){
@@ -23,8 +25,10 @@ public class TrackMovement : MonoBehaviour {
 		ig = gameObject.GetComponentInParent<IgEvent> ();
 		//EventManager.StartListening ("MoveDotsForward", moveForwardListener);
 		//EventManager.StartListening ("MoveDotsBack", moveBackListener);
-		EventManager.StartListening ("UpdateDots", updateListener);
+		EventManager.StartListening ("UpdateDots", updateDotsListener);
+		EventManager.StartListening ("UpdateLine", updateLineListener);
 		UpdateDots ();
+		UpdateLine ();
 	}
 	/*
 	public void MoveDotsForward(){
@@ -36,12 +40,8 @@ public class TrackMovement : MonoBehaviour {
 	}
 */
 	public void UpdateDots(){
-		MoveDots ();
-	}
-
-	public void MoveDots(){
 		gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(ig.fps*1f));
-		UpdateLine (id);
+		//UpdateLine ();
 	}
 
 	Vector3[] GetTrack(int id, int size){
@@ -52,7 +52,7 @@ public class TrackMovement : MonoBehaviour {
 		return LRthisTrack;
 	}
 
-	void UpdateLine(int id){
+	public void UpdateLine(){
 		LineRenderer lr = gameObject.GetComponent<LineRenderer>();
 		lr.numPositions = ig.currentFrame;
 		Vector3[] LRthisTrack = GetTrack (id,ig.currentFrame);
