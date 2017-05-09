@@ -12,6 +12,18 @@ public class CameraCycler : MonoBehaviour {
 		es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 	}
 
+	void Update(){
+		if(Input.GetKeyDown(KeyCode.C)){
+			if (IsInvoking ("Cycle")) {
+				CancelInvoke ("Cycle");
+				Cycle ();
+			} else {
+				Cycle ();
+				CancelInvoke ("Cycle");
+			}
+		}
+	}
+
 	float cameraDelay = 15f;
 	public void Cycle(){
 		//switch camera angle
