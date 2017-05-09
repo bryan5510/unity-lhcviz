@@ -12,7 +12,7 @@ public class IgEvent : MonoBehaviour{
 	public Material electron;
 
 	GameObject[] tracks;
-	int currentFrame = 0;
+	public int currentFrame = 0;
 	public int fps = 90;
 	public Vector3[,] LRpoints;
 	public bool stopAnim = false;
@@ -33,19 +33,38 @@ public class IgEvent : MonoBehaviour{
 		return fps;
 	}
 
+	int direction = 1;
 	void FixedUpdate(){
 		if(Input.GetKey(KeyCode.LeftArrow)){
 			stopAnim = true;
-			EventManager.TriggerEvent ("MoveDotsBack");
+			MoveDots (-1);
 		}
 		if(Input.GetKey(KeyCode.RightArrow)){
 			stopAnim = true;
-			EventManager.TriggerEvent ("MoveDotsForward");
+			MoveDots (1);
 		}
 		if(Input.GetKeyUp(KeyCode.LeftArrow)||Input.GetKeyUp(KeyCode.RightArrow)){
 			stopAnim = false;
 		}
+
+		if (!stopAnim) {
+			if (!MoveDots (direction)) {
+				direction *= -1;
+			}
+		}
+
 	}
+
+	bool MoveDots(int c){
+		if (currentFrame + c >= 0 && currentFrame + c <= fps) {
+			currentFrame += c;
+			EventManager.TriggerEvent ("UpdateDots");
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	Vector3[] GetTrack(int i, int size){
 		Vector3[] LRthisTrack = new Vector3[size];
@@ -222,7 +241,7 @@ public class IgEvent : MonoBehaviour{
 						curve.transform.GetChild (0).GetComponent<MeshRenderer> ().material = proton;
 					} else if (charge [i] < 0) {
 						curve.transform.GetChild (0).GetComponent<MeshRenderer> ().material = electron;
-						curve.transform.GetChild (0).localScale = new Vector3(0.04f,0.04f,0.04f);
+						curve.transform.GetChild (0).localScale = new Vector3(0.05f,0.05f,0.05f);
 						//curve.transform.GetChild (0).localScale = new Vector3(0.000054f,0.000054f,0.000054f);
 					}
 				}catch{
