@@ -13,7 +13,7 @@ public class IgEvent : MonoBehaviour{
 
 	GameObject[] tracks;
 	public int currentFrame = 0;
-	public int fps = 90;
+	public int fps = 270;
 	public Vector3[,] LRpoints;
 	public bool stopAnim = false;
 
@@ -57,10 +57,8 @@ public class IgEvent : MonoBehaviour{
 			if (!MoveDots (direction)) {
 				if(cycler.GetIsOn()){
 					cycler.CycleOnce();
-					SetCurrentFrame (0);
-				}else{
-					direction *= -1;
 				}
+				SetCurrentFrame (0);
 			}
 		}
 
