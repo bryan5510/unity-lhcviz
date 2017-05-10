@@ -24,7 +24,7 @@ public class CameraCycler : MonoBehaviour {
 		cams [currentCam].enabled = true;
 	}
 
-	float cameraDelay = 15f;
+	//float cameraDelay = 15f;
 	public void CycleOnce(){
 		//switch camera angle
 		cams [currentCam].enabled = false;

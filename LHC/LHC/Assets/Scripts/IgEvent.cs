@@ -13,7 +13,7 @@ public class IgEvent : MonoBehaviour{
 
 	GameObject[] tracks;
 	public int currentFrame = 0;
-	public int fps = 270;
+	//public int fps = 270;
 	public Vector3[,] LRpoints;
 	public bool stopAnim = false;
 
@@ -30,13 +30,15 @@ public class IgEvent : MonoBehaviour{
 		EventManager.TriggerEvent ("UpdateLine");
 	}
 
-	public int GetFPS(){
+	/*public int GetFPS(){
 		return fps;
-	}
+	}*/
 
 	CameraCycler cycler;
+	EventSpawner es;
 	void Awake(){
 		cycler = GameObject.Find ("CameraCycle").GetComponent<CameraCycler> ();
+		es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 	}
 
 	int direction = 1;
@@ -65,7 +67,7 @@ public class IgEvent : MonoBehaviour{
 	}
 
 	bool MoveDots(int c){
-		if (currentFrame + c >= 0 && currentFrame + c <= fps) {
+		if (currentFrame + c >= 0 && currentFrame + c <= es.fps) {
 			currentFrame += c;
 			EventManager.TriggerEvent ("UpdateDots");
 			EventManager.TriggerEvent ("UpdateLine");
@@ -181,7 +183,7 @@ public class IgEvent : MonoBehaviour{
 		GameObject[] trks = new GameObject[lines.Length];
 
 
-		LRpoints = new Vector3[lines.Length,fps+1];
+		LRpoints = new Vector3[lines.Length,es.fps+1];
 
 		for(int i = 0; i < lines.Length; i++){
 			//Debug.Log (lines[i]);
@@ -233,13 +235,13 @@ public class IgEvent : MonoBehaviour{
 			bs.SetAllControlPoints (p1,p3,p4,p2);
 			bs.MakeSpline(1,new Transform[1] {dotShape.transform});
 
-			for(int j = 0; j < fps + 1; j++){
-				LRpoints [i,j] = bs.GetPoint ((j*1f)/(fps*1f));
+			for(int j = 0; j < es.fps + 1; j++){
+				LRpoints [i,j] = bs.GetPoint ((j*1f)/(es.fps*1f));
 			}
 
 			LineRenderer lr = curve.AddComponent<LineRenderer>();
-			lr.numPositions = fps + 1;
-			Vector3[] LRthisTrack = GetTrack (i,fps+1);
+			lr.numPositions = es.fps + 1;
+			Vector3[] LRthisTrack = GetTrack (i,es.fps+1);
 			lr.SetPositions (LRthisTrack);
 			lr.startWidth = 0.01f;
 			lr.endWidth = 0.01f;
@@ -251,7 +253,7 @@ public class IgEvent : MonoBehaviour{
 						curve.transform.GetChild (0).GetComponent<MeshRenderer> ().material = proton;
 					} else if (charge [i] < 0) {
 						curve.transform.GetChild (0).GetComponent<MeshRenderer> ().material = electron;
-						curve.transform.GetChild (0).localScale = new Vector3(0.05f,0.05f,0.05f);
+						curve.transform.GetChild (0).localScale = new Vector3(0.07f,0.07f,0.07f);
 						//curve.transform.GetChild (0).localScale = new Vector3(0.000054f,0.000054f,0.000054f);
 					}
 				}catch{

@@ -83,6 +83,7 @@ public class EventSpawner : MonoBehaviour {
 		}
 	}
 
+	public int fps = 270;
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
 			IncEvent ();
@@ -93,6 +94,24 @@ public class EventSpawner : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.R)){
 			Reset ();
 		}
+
+		if(Input.GetKeyDown(KeyCode.Alpha1)){
+			fps = 90;
+			SwapEvent (currentEvent);
+		}if(Input.GetKeyDown(KeyCode.Alpha2)){
+			fps = 180;
+			SwapEvent (currentEvent);
+		}if(Input.GetKeyDown(KeyCode.Alpha3)){
+			fps = 270;
+			SwapEvent (currentEvent);
+		}if(Input.GetKeyDown(KeyCode.Alpha4)){
+			fps = 360;
+			SwapEvent (currentEvent);
+		}if(Input.GetKeyDown(KeyCode.Alpha5)){
+			fps = 450;
+			SwapEvent (currentEvent);
+		}
+
 	}
 
 	public bool IncEvent(){

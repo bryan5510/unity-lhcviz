@@ -20,9 +20,11 @@ public class TrackMovement : MonoBehaviour {
 		updateLineListener = new UnityAction (UpdateLine);
 	}
 
+	EventSpawner es;
 	void Start(){
 		id = int.Parse(gameObject.name.Substring (6));
 		ig = gameObject.GetComponentInParent<IgEvent> ();
+		es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 		//EventManager.StartListening ("MoveDotsForward", moveForwardListener);
 		//EventManager.StartListening ("MoveDotsBack", moveBackListener);
 		EventManager.StartListening ("UpdateDots", updateDotsListener);
@@ -40,7 +42,7 @@ public class TrackMovement : MonoBehaviour {
 	}
 */
 	public void UpdateDots(){
-		gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(ig.fps*1f));
+		gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(es.fps*1f));
 		//UpdateLine ();
 	}
 

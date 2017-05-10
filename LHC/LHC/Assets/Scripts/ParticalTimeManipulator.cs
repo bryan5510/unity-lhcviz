@@ -14,10 +14,15 @@ namespace Valve.VR.InteractionSystem
 		bool isPaused = false;
 		IgEvent IE;
 
+		EventSpawner es;
+		void Awake(){
+			es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+		}
+
 		void HandAttachedUpdate (Hand hand)
 		{
 			IE = GameObject.Find ("IgEvent").GetComponent<IgEvent> ();
-			int fps = IE.GetFPS ();
+			//int fps = IE.GetFPS ();
 			touchpad = hand.controller.GetAxis ();
 			//float midDist = Vector2.Distance (Vector2.zero, touchpad);
 			float topDist = Vector2.Distance (new Vector2(0,1-buttonSize), touchpad);
@@ -48,7 +53,7 @@ namespace Valve.VR.InteractionSystem
 							}
 						}
 					}else if (touchpad.x > buttonSize) {
-						if (currentFrame + 1 <= fps) {
+						if (currentFrame + 1 <= es.fps) {
 							currentFrame += 1;
 							int t = currentFrame;
 							IE.SetCurrentFrame (t);
@@ -61,7 +66,7 @@ namespace Valve.VR.InteractionSystem
 			}else if (mode == 1) {
 				if (hand.controller.GetTouch (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
 					if(-1+buttonSize+buttonSize < touchpad.y && touchpad.y < 1-buttonSize-buttonSize){
-						int t = (int)(((touchpad.x + 1f) / 2f) * fps);
+						int t = (int)(((touchpad.x + 1f) / 2f) * es.fps);
 						IE.SetCurrentFrame (t);
 						//Debug.Log(t);
 					}
