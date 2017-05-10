@@ -7,16 +7,8 @@ public class CameraCycler : MonoBehaviour {
 	public Camera[] cams;
 	int currentCam = 0;
 	EventSpawner es;
-	Rect[] rects;
 
 	void Awake(){
-		rects = new Rect[6];
-		rects [0] = new Rect (0, 0.2f, 1, 0.8f);
-		rects [1] = new Rect (0, 0, 0.2f, 0.2f);
-		rects [2] = new Rect (0.2f, 0, 0.2f, 0.2f);
-		rects [3] = new Rect (0.4f, 0, 0.2f, 0.2f);
-		rects [4] = new Rect (0.6f, 0, 0.2f, 0.2f);
-		rects [5] = new Rect (0.8f, 0, 0.2f, 0.2f);
 		es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 	}
 
@@ -26,21 +18,16 @@ public class CameraCycler : MonoBehaviour {
 		}
 	}
 
-	public void CycleOnce(){
-		if (IsInvoking ("Cycle")) {
-			CancelInvoke ("Cycle");
-			Cycle ();
-		} else {
-			Cycle ();
-			CancelInvoke ("Cycle");
-		}
+	public void SetCamera(int cam){
+		cams [currentCam].enabled = false;
+		currentCam = cam;
+		cams [currentCam].enabled = true;
 	}
 
 	float cameraDelay = 15f;
-	void Cycle(){
+	public void CycleOnce(){
 		//switch camera angle
-		cams [currentCam].depth = 2;
-		cams [currentCam].rect = rects [currentCam + 1];
+		cams [currentCam].enabled = false;
 		currentCam+=1;
 		if(currentCam >= cams.Length){
 			currentCam = 0;
@@ -48,9 +35,7 @@ public class CameraCycler : MonoBehaviour {
 		if(currentCam == 0){
 			ShowNextEvent ();
 		}
-		cams [currentCam].depth = 1;
-		cams [currentCam].rect = rects [0];
-		Invoke ("Cycle", cameraDelay);
+		cams [currentCam].enabled = true;
 	}
 
 	void ShowNextEvent(){
@@ -59,15 +44,13 @@ public class CameraCycler : MonoBehaviour {
 		}
 	}
 
+	bool isOn = false;
+	public bool GetIsOn(){
+		return isOn;
+	}
+
 	public void ToggleAutoMoveToNext(){
-		if (IsInvoking ("Cycle")) {
-			CancelInvoke ("Cycle");
-			if (IsInvoking ("ShowNextEvent")) {
-				CancelInvoke ("ShowNextEvent");
-			}
-		} else {
-			Invoke ("Cycle",cameraDelay);
-		}
+		isOn = !isOn;
 	}
 
 }

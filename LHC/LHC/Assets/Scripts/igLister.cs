@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class igLister : MonoBehaviour {
 
 	EventSpawner EvSpa;
-	GameObject UI;
+	//GameObject UI;
 	public Object runButtonPrefab;
 	public Object eventButtonPrefab;
 	GameObject content;
@@ -14,9 +14,9 @@ public class igLister : MonoBehaviour {
 	//public Scrollbar scrollbar;
 
 	void Start () {
-		UI = GameObject.Find ("Canvas");
+		//UI = GameObject.Find ("Canvas");
 		//handle = UI.transform.FindChild ("Scroll View").FindChild ("Scrollbar Vertical").FindChild ("Sliding Area").FindChild ("Handle").gameObject;
-		content = UI.transform.FindChild ("Scroll View").FindChild ("Viewport").FindChild ("Content").gameObject;
+		content = this.transform.FindChild ("Scroll View").FindChild ("Viewport").FindChild ("Content").gameObject;
 		content.GetComponent<RectTransform> ().localPosition = Vector3.zero;
 		EvSpa = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 	}
