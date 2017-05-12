@@ -16,6 +16,7 @@ public class EventSpawner : MonoBehaviour {
 	int currentRun = 0;
 
 	public GameObject dotShape;
+	public GameObject cone;
 	public Material mat;
 	public Material proton;
 	public Material electron;
@@ -70,6 +71,7 @@ public class EventSpawner : MonoBehaviour {
 		igEventObj.tag = "IgEvent";
 		IgEvent ige = igEventObj.AddComponent<IgEvent> ();
 		ige.dotShape = dotShape;
+		ige.cone = cone;
 		ige.mat = mat;
 		ige.proton = proton;
 		ige.electron = electron;
@@ -91,9 +93,9 @@ public class EventSpawner : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.M) && runFolders.Length > 1){
 			IncRun ();
 		}
-		if(Input.GetKeyDown(KeyCode.R)){
+		/*if(Input.GetKeyDown(KeyCode.R)){
 			Reset ();
-		}
+		}*/
 
 		if(Input.GetKeyDown(KeyCode.Alpha1)){
 			fps = 90;
