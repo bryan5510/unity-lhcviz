@@ -7,22 +7,26 @@ using Ionic.Zip;
 
 public class EventSpawner : MonoBehaviour {
 
-	DirectoryInfo igFolder;
-	DirectoryInfo[] runFolders;
+	DirectoryInfo igZippedFolder;
+	//DirectoryInfo[] runFolders;
 	FileInfo[] eventFiles;
+	DirectoryInfo[] igsUnpackedFolder;
 	FileInfo[] igFiles;
-	string dataEventPath = "Data\\Events";
+	string dataEventPath = "Data\\UnZippedIgs";
 	int currentEvent = 0;
 	int currentRun = 0;
 
 	public GameObject dotShape;
 	public GameObject cone;
 	public Material mat;
+	public Material met;
 	public Material proton;
 	public Material electron;
 
+	public bool showJets = true;
+
 	void Start () {
-		igFolder = new DirectoryInfo ("Data\\igFiles");
+		igZippedFolder = new DirectoryInfo ("Data\\igFiles");
 		Reset ();
 		SwapRun (0);
 	}
@@ -31,11 +35,11 @@ public class EventSpawner : MonoBehaviour {
 		currentEvent = 0;
 		currentRun = 0;
 
-		igFiles = igFolder.GetFiles ();
+		igFiles = igZippedFolder.GetFiles ();
 		UnzipAll ();
 
-		DirectoryInfo eventFolder = new DirectoryInfo (dataEventPath);
-		runFolders = eventFolder.GetDirectories ();
+		DirectoryInfo iuf = new DirectoryInfo (dataEventPath);
+		igsUnpackedFolder = iuf.GetDirectories ();
 	}
 
 	public FileInfo[] GetIgFiles(){
@@ -53,9 +57,28 @@ public class EventSpawner : MonoBehaviour {
 	}
 
 	void Unzip(FileInfo fileToUnzip){
-		//Directory.CreateDirectory ("Data");
+		//try{
+		Directory.CreateDirectory (dataEventPath+"\\"+fileToUnzip.Name);
+		//}catch{}
 		using (ZipFile zip = ZipFile.Read(fileToUnzip.FullName)){
-			zip.ExtractAll ("Data", ExtractExistingFileAction.OverwriteSilently);
+			zip.ExtractAll (dataEventPath+"\\"+fileToUnzip.Name, ExtractExistingFileAction.OverwriteSilently);
+		}
+
+		DirectoryInfo igfolder = new DirectoryInfo (dataEventPath+"\\"+fileToUnzip.Name+"\\Events");
+		DirectoryInfo[] allruns = igfolder.GetDirectories ();
+		foreach(DirectoryInfo run in allruns){
+			FileInfo[] allfiles = run.GetFiles ();
+			foreach(FileInfo file in allfiles){
+				try{
+					file.CopyTo (dataEventPath+"\\"+fileToUnzip.Name+"\\Events\\"+file.Name);
+				}catch{
+					try{
+						file.Delete();
+					}catch{
+					}
+				}
+			}
+			run.Delete ();
 		}
 
 	}
@@ -73,6 +96,7 @@ public class EventSpawner : MonoBehaviour {
 		ige.dotShape = dotShape;
 		ige.cone = cone;
 		ige.mat = mat;
+		ige.met = met;
 		ige.proton = proton;
 		ige.electron = electron;
 		return ige.parseExtras (i);
@@ -90,8 +114,11 @@ public class EventSpawner : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
 			IncEvent ();
 		}
-		if(Input.GetKeyDown(KeyCode.M) && runFolders.Length > 1){
+		if(Input.GetKeyDown(KeyCode.M) && igsUnpackedFolder.Length > 1){
 			IncRun ();
+		}
+		if(Input.GetKeyDown(KeyCode.J)){
+			showJets = !showJets;
 		}
 		/*if(Input.GetKeyDown(KeyCode.R)){
 			Reset ();
@@ -116,9 +143,11 @@ public class EventSpawner : MonoBehaviour {
 
 	}
 
-	public bool IncEvent(){
+	public bool IncEvent(bool canMoveOntoNextRun = true){
 		if (currentEvent + 1 < eventFiles.Length) {
 			currentEvent++;
+		} else if(canMoveOntoNextRun){
+			return IncRun ();
 		} else {
 			currentEvent = 0;
 		}
@@ -126,7 +155,7 @@ public class EventSpawner : MonoBehaviour {
 	}
 
 	public bool IncRun(){
-		if (currentRun + 1 < runFolders.Length) {
+		if (currentRun + 1 < igsUnpackedFolder.Length) {
 			currentRun++;
 		} else {
 			currentRun = 0;
@@ -142,10 +171,10 @@ public class EventSpawner : MonoBehaviour {
 	}
 
 	public bool SwapRun(int i){
-		if(i >= 0 && i < runFolders.Length){
+		if(i >= 0 && i < igsUnpackedFolder.Length){
 			currentRun = i;
 			currentEvent = 0;
-			eventFiles = runFolders[i].GetFiles();
+			eventFiles = igsUnpackedFolder[i].GetDirectories()[0].GetFiles();
 			return SwapEvent (currentEvent);
 		}
 		return false;

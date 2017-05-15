@@ -8,6 +8,7 @@ public class IgEvent : MonoBehaviour{
 
 	public GameObject dotShape;
 	public Material mat;
+	public Material met;
 	public Material proton;
 	public Material electron;
 
@@ -131,10 +132,10 @@ public class IgEvent : MonoBehaviour{
 
 			LineRenderer lr = go.AddComponent<LineRenderer>();
 			lr.numPositions = 2;
-			lr.SetPositions (new Vector3[]{Vector3.zero, new Vector3(float.Parse(values[2]),float.Parse(values[3]),0)});
+			lr.SetPositions (new Vector3[]{Vector3.zero, new Vector3(float.Parse(values[2])/10,float.Parse(values[3])/10,0)});
 			lr.startWidth = 0.01f;
 			lr.endWidth = 0.01f;
-			lr.material = electron;
+			lr.material = met;
 
 			go.transform.SetParent (transform);
 		}
@@ -163,11 +164,20 @@ public class IgEvent : MonoBehaviour{
 				values[3] = values[3].Substring(0,values[3].Length-1);
 			}
 
-			Debug.Log (values[0]+"\n"+values[1]+"\n"+values[2]+"\n"+values[3]+"\n");
+			//Debug.Log (values[0]+"\n"+values[1]+"\n"+values[2]+"\n"+values[3]+"\n");
 
-			GameObject item = Instantiate (cone) as GameObject;
+			float[] data = new float[] {
+				float.Parse (values [0]),
+				float.Parse (values [1]),
+				float.Parse (values [2]),
+				float.Parse (values [3])
+			};
+
+			GameObject jet = MakeJet (data, 10);
+
+			//GameObject item = Instantiate (cone) as GameObject;
 			//GameObject go = new GameObject ();
-			item.name = jetType + " - " + i;
+			jet.name = jetType + " - " + i;
 			/*
 			LineRenderer lr = go.AddComponent<LineRenderer>();
 			lr.numPositions = 2;
@@ -178,14 +188,44 @@ public class IgEvent : MonoBehaviour{
 			lr.material = mat;
 			lr.numCapVertices = 20;*/
 
-			item.transform.localScale = new Vector3 (1,1,float.Parse(values[0])/10f);
 
-			item.transform.eulerAngles= new Vector3 ((-180/(float)Math.PI) *float.Parse(values[3]), (-180/(float)Math.PI) * float.Parse(values[1]), 0);
+			//jet.transform.eulerAngles= new Vector3 ((-180/(float)Math.PI) *float.Parse(values[3]), (-180/(float)Math.PI) * float.Parse(values[1]), 0);
 
-			item.transform.SetParent (transform);
+			jet.transform.SetParent (transform);
 		}
 	}
 
+	GameObject MakeJet(float[] data, float selectionCutOff) {
+		var et = data[0];
+
+		float theta = data[2];
+		float phi = data[3];
+
+		float ct = (float) Math.Cos(theta);
+		float st = (float) Math.Sin(theta);
+		float cp = (float) Math.Cos(phi);
+		float sp = (float) Math.Sin(phi);
+
+		float maxZ = 4.0f;
+		float maxR = 2.0f;
+
+		float length1 = maxZ / Math.Abs(ct);
+		float length2 = maxR / Math.Abs(st);
+		float length = length1 < length2 ? length1 : length2;
+		//var radius = 0.3 * (1.0 /(1 + 0.001));
+
+		GameObject jet = Instantiate (cone) as GameObject;
+
+		jet.transform.localScale = new Vector3 (length*0.5f,length*0.5f,length);
+
+		jet.gameObject.transform.LookAt(new Vector3(length*0.5f*st*cp, length*0.5f*st*sp, length*0.5f*ct));
+
+		if ( et < selectionCutOff ) {
+			jet.SetActive (false);
+		}
+
+		return jet;
+	}
 
 
 
@@ -288,9 +328,9 @@ public class IgEvent : MonoBehaviour{
 		int[] charge = ParseCharge (eventFile);
 		ParseEventInfo (eventFile);
 		ParseAllMets (eventFile);
-		/*try{
+		try{
 			ParseJet(eventFile,"\"Jets_V");}catch{
-		}*/
+		}
 
 		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
 		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 

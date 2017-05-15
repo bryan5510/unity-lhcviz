@@ -10,6 +10,7 @@ public class GarbageCollector : MonoBehaviour {
 	}
 
 	void ReloadAndGC () {
+		Resources.UnloadUnusedAssets ();
 		System.GC.Collect();
 		Invoke ("ReloadAndGC", timer);
 	}
