@@ -23,11 +23,11 @@ public class EventSpawner : MonoBehaviour {
 	public Material proton;
 	public Material electron;
 
-	public bool showJets = true;
-
+	SettingsManager sm;
 	void Start () {
 		igZippedFolder = new DirectoryInfo ("Data\\igFiles");
-		//Reset ();
+		sm = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
+		Reset ();
 		//SwapRun (0);
 	}
 
@@ -114,11 +114,10 @@ public class EventSpawner : MonoBehaviour {
 	}
 
 	void ToggleJets(){
-		showJets = !showJets;
-		GameObject.Find ("IgEvent").GetComponent<IgEvent> ().HideJets (showJets);
+		sm.showJets = !sm.showJets;
+		GameObject.Find ("IgEvent").GetComponent<IgEvent> ().HideJets (sm.showJets);
 	}
 
-	public int fps = 270;
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
 			IncEvent ();
@@ -134,19 +133,19 @@ public class EventSpawner : MonoBehaviour {
 		}*/
 
 		if(Input.GetKeyDown(KeyCode.Alpha1)){
-			fps = 90;
+			sm.fps = 90;
 			SwapEvent (currentEvent);
 		}if(Input.GetKeyDown(KeyCode.Alpha2)){
-			fps = 180;
+			sm.fps = 180;
 			SwapEvent (currentEvent);
 		}if(Input.GetKeyDown(KeyCode.Alpha3)){
-			fps = 270;
+			sm.fps = 270;
 			SwapEvent (currentEvent);
 		}if(Input.GetKeyDown(KeyCode.Alpha4)){
-			fps = 360;
+			sm.fps = 360;
 			SwapEvent (currentEvent);
 		}if(Input.GetKeyDown(KeyCode.Alpha5)){
-			fps = 450;
+			sm.fps = 450;
 			SwapEvent (currentEvent);
 		}
 
@@ -167,7 +166,8 @@ public class EventSpawner : MonoBehaviour {
 		if (currentRun + 1 < igsUnpackedFolder.Length) {
 			currentRun++;
 		} else {
-			currentRun = 0;
+			GameObject.Find ("SceneLoader").GetComponent<SceneLoader> ().ReloadScene ();
+			return true;
 		}
 		return SwapRun (currentRun);
 	}

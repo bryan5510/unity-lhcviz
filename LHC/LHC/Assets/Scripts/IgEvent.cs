@@ -31,12 +31,14 @@ public class IgEvent : MonoBehaviour{
 	}
 
 	CameraCycler cycler;
-	EventSpawner es;
+	//EventSpawner es;
+	SettingsManager sm;
 	void Awake(){
 		try{
 			cycler = GameObject.Find ("CameraCycle").GetComponent<CameraCycler> ();
 		}catch{}
-		es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+	//	es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+		sm = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
 	}
 
 	int direction = 1;
@@ -56,7 +58,7 @@ public class IgEvent : MonoBehaviour{
 		if (!stopAnim) {
 			if (!MoveDots (direction)) {
 				if(cycler != null){
-					if(cycler.GetIsOn()){
+					if(sm.isAutoLoopOn){
 						cycler.CycleOnce();
 					}
 				}
@@ -67,7 +69,7 @@ public class IgEvent : MonoBehaviour{
 	}
 
 	bool MoveDots(int c){
-		if (currentFrame + c >= 0 && currentFrame + c <= es.fps) {
+		if (currentFrame + c >= 0 && currentFrame + c <= sm.fps) {
 			currentFrame += c;
 			EventManager.TriggerEvent ("UpdateDots");
 			EventManager.TriggerEvent ("UpdateLine");
@@ -211,7 +213,7 @@ public class IgEvent : MonoBehaviour{
 			jetsArrayList.Add (jet);
 		}
 
-		if(!es.showJets) {
+		if(!sm.showJets) {
 			jet.SetActive (false);
 		} 
 
@@ -336,7 +338,7 @@ public class IgEvent : MonoBehaviour{
 		GameObject[] trks = new GameObject[lines.Length];
 
 
-		LRpoints = new Vector3[lines.Length,es.fps+1];
+		LRpoints = new Vector3[lines.Length,sm.fps+1];
 
 		for(int i = 0; i < lines.Length; i++){
 			//Debug.Log (lines[i]);
@@ -388,13 +390,13 @@ public class IgEvent : MonoBehaviour{
 			bs.SetAllControlPoints (p1,p3,p4,p2);
 			bs.MakeSpline(1,new Transform[1] {dotShape.transform});
 
-			for(int j = 0; j < es.fps + 1; j++){
-				LRpoints [i,j] = bs.GetPoint ((j*1f)/(es.fps*1f));
+			for(int j = 0; j < sm.fps + 1; j++){
+				LRpoints [i,j] = bs.GetPoint ((j*1f)/(sm.fps*1f));
 			}
 
 			LineRenderer lr = curve.AddComponent<LineRenderer>();
-			lr.numPositions = es.fps + 1;
-			Vector3[] LRthisTrack = GetTrack (i,es.fps+1);
+			lr.numPositions = sm.fps + 1;
+			Vector3[] LRthisTrack = GetTrack (i,sm.fps+1);
 			lr.SetPositions (LRthisTrack);
 			lr.startWidth = 0.01f;
 			lr.endWidth = 0.01f;

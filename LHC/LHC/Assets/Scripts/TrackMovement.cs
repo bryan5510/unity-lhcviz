@@ -14,11 +14,13 @@ public class TrackMovement : MonoBehaviour {
 		updateLineListener = new UnityAction (UpdateLine);
 	}
 
-	EventSpawner es;
+	//EventSpawner es;
+	SettingsManager sm;
 	void Start(){
+		//es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+		sm = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
 		id = int.Parse(gameObject.name.Substring (6));
 		ig = gameObject.GetComponentInParent<IgEvent> ();
-		es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 		EventManager.StartListening ("UpdateDots", updateDotsListener);
 		EventManager.StartListening ("UpdateLine", updateLineListener);
 		UpdateDots ();
@@ -26,7 +28,7 @@ public class TrackMovement : MonoBehaviour {
 	}
 
 	public void UpdateDots(){
-		gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(es.fps*1f));
+		gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(sm.fps*1f));
 		//UpdateLine ();
 	}
 

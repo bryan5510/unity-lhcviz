@@ -14,9 +14,11 @@ namespace Valve.VR.InteractionSystem
 		bool isPaused = false;
 		IgEvent IE;
 
-		EventSpawner es;
+		//EventSpawner es;
+		SettingsManager sm;
 		void Awake(){
-			es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+			//es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+			sm = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
 		}
 
 		void HandAttachedUpdate (Hand hand)
@@ -53,7 +55,7 @@ namespace Valve.VR.InteractionSystem
 							}
 						}
 					}else if (touchpad.x > buttonSize) {
-						if (currentFrame + 1 <= es.fps) {
+						if (currentFrame + 1 <= sm.fps) {
 							currentFrame += 1;
 							int t = currentFrame;
 							IE.SetCurrentFrame (t);
@@ -66,7 +68,7 @@ namespace Valve.VR.InteractionSystem
 			}else if (mode == 1) {
 				if (hand.controller.GetTouch (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
 					if(-1+buttonSize+buttonSize < touchpad.y && touchpad.y < 1-buttonSize-buttonSize){
-						int t = (int)(((touchpad.x + 1f) / 2f) * es.fps);
+						int t = (int)(((touchpad.x + 1f) / 2f) * sm.fps);
 						IE.SetCurrentFrame (t);
 						//Debug.Log(t);
 					}

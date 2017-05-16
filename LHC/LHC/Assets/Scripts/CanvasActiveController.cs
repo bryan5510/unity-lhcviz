@@ -7,7 +7,7 @@ public class CanvasActiveController : MonoBehaviour {
 	public GameObject canvas;
 
 	void Start () {
-		canvas.SetActive (true);
+		canvas.SetActive (false);
 	}
 
 	void Update () {

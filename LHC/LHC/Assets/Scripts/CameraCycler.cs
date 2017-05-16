@@ -43,14 +43,4 @@ public class CameraCycler : MonoBehaviour {
 			Invoke ("ShowNextEvent",0.1f);
 		}
 	}
-
-	bool isOn = false;
-	public bool GetIsOn(){
-		return isOn;
-	}
-
-	public void ToggleAutoMoveToNext(){
-		isOn = !isOn;
-	}
-
 }

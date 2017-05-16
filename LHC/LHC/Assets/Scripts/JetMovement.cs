@@ -13,16 +13,18 @@ public class JetMovement : MonoBehaviour {
 		updateLineListener = new UnityAction (UpdateLine);
 	}
 
-	EventSpawner es;
+	//EventSpawner es;
+	SettingsManager sm;
 	void Start(){
+		//es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+		sm = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
 		ig = gameObject.GetComponentInParent<IgEvent> ();
-		es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
 		EventManager.StartListening ("UpdateLine", updateLineListener);
 		UpdateLine ();
 	}
 
 	public void UpdateLine(){
-		float t = (ig.currentFrame*1f) / (es.fps*1f);
+		float t = (ig.currentFrame*1f) / (sm.fps*1f);
 		transform.localScale = Vector3.Lerp (Vector3.zero, targetScale, t);
 	}
 }
