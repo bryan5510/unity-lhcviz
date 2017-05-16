@@ -6,16 +6,10 @@ public class TrackMovement : MonoBehaviour {
 
 	IgEvent ig;
 	int id;
-	//int currentFrame = 0;
-
-	//private UnityAction moveForwardListener;
-	//private UnityAction moveBackListener;
 	private UnityAction updateDotsListener;
 	private UnityAction updateLineListener;
 
 	void Awake(){
-		//moveForwardListener = new UnityAction (MoveDotsForward);
-		//moveBackListener = new UnityAction (MoveDotsBack);
 		updateDotsListener = new UnityAction (UpdateDots);
 		updateLineListener = new UnityAction (UpdateLine);
 	}
@@ -25,22 +19,12 @@ public class TrackMovement : MonoBehaviour {
 		id = int.Parse(gameObject.name.Substring (6));
 		ig = gameObject.GetComponentInParent<IgEvent> ();
 		es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
-		//EventManager.StartListening ("MoveDotsForward", moveForwardListener);
-		//EventManager.StartListening ("MoveDotsBack", moveBackListener);
 		EventManager.StartListening ("UpdateDots", updateDotsListener);
 		EventManager.StartListening ("UpdateLine", updateLineListener);
 		UpdateDots ();
 		UpdateLine ();
 	}
-	/*
-	public void MoveDotsForward(){
-		MoveDots (1);
-	}
 
-	public void MoveDotsBack(){
-		MoveDots (-1);
-	}
-*/
 	public void UpdateDots(){
 		gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(es.fps*1f));
 		//UpdateLine ();

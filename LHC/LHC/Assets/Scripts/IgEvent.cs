@@ -198,7 +198,10 @@ public class IgEvent : MonoBehaviour{
 
 		GameObject jet = Instantiate (cone) as GameObject;
 
-		jet.transform.localScale = new Vector3 (length*0.5f,length*0.5f,length);
+		JetMovement jm = jet.AddComponent<JetMovement> ();
+		jm.targetScale = new Vector3 (length*0.5f,length*0.5f,length);
+		//jet.transform.localScale = new Vector3 (length*0.5f,length*0.5f,length);
+		jet.transform.localScale = Vector3.zero;
 
 		jet.gameObject.transform.LookAt(new Vector3(length*0.5f*st*cp, length*0.5f*st*sp, length*0.5f*ct));
 
