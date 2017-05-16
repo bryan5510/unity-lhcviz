@@ -27,8 +27,8 @@ public class EventSpawner : MonoBehaviour {
 
 	void Start () {
 		igZippedFolder = new DirectoryInfo ("Data\\igFiles");
-		Reset ();
-		SwapRun (0);
+		//Reset ();
+		//SwapRun (0);
 	}
 
 	public void Reset(){
@@ -40,6 +40,8 @@ public class EventSpawner : MonoBehaviour {
 
 		DirectoryInfo iuf = new DirectoryInfo (dataEventPath);
 		igsUnpackedFolder = iuf.GetDirectories ();
+
+		SwapRun (0);
 	}
 
 	public FileInfo[] GetIgFiles(){
@@ -70,17 +72,19 @@ public class EventSpawner : MonoBehaviour {
 			FileInfo[] allfiles = run.GetFiles ();
 			foreach(FileInfo file in allfiles){
 				try{
-					file.CopyTo (dataEventPath+"\\"+fileToUnzip.Name+"\\Events\\"+file.Name);
-				}catch{
-					try{
-						file.Delete();
-					}catch{
-					}
-				}
+					file.MoveTo (dataEventPath+"\\"+fileToUnzip.Name+"\\Events\\"+file.Name);
+				}catch{}
 			}
-			run.Delete ();
+			run.Delete (true);
 		}
+	}
 
+	void fileCleanUp(){
+		Directory.Delete (dataEventPath, true);
+	}
+
+	void OnApplicationQuit(){
+		fileCleanUp ();
 	}
 
 	string GetFileName(FileInfo i){

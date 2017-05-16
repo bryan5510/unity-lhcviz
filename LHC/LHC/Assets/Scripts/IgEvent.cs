@@ -14,7 +14,6 @@ public class IgEvent : MonoBehaviour{
 
 	GameObject[] tracks;
 	public int currentFrame = 0;
-	//public int fps = 270;
 	public Vector3[,] LRpoints;
 	public bool stopAnim = false;
 
@@ -30,10 +29,6 @@ public class IgEvent : MonoBehaviour{
 		EventManager.TriggerEvent ("UpdateDots");
 		EventManager.TriggerEvent ("UpdateLine");
 	}
-
-	/*public int GetFPS(){
-		return fps;
-	}*/
 
 	CameraCycler cycler;
 	EventSpawner es;
@@ -102,7 +97,7 @@ public class IgEvent : MonoBehaviour{
 		try{
 			ParseMet(eventFile, "\"METs_V");
 		}catch{
-			Debug.Log ("no Regular METs.");
+			//Debug.Log ("no Regular METs.");
 		}
 		/*
 		try{
@@ -164,8 +159,6 @@ public class IgEvent : MonoBehaviour{
 				values[3] = values[3].Substring(0,values[3].Length-1);
 			}
 
-			//Debug.Log (values[0]+"\n"+values[1]+"\n"+values[2]+"\n"+values[3]+"\n");
-
 			float[] data = new float[] {
 				float.Parse (values [0]),
 				float.Parse (values [1]),
@@ -175,21 +168,7 @@ public class IgEvent : MonoBehaviour{
 
 			GameObject jet = MakeJet (data, 10);
 
-			//GameObject item = Instantiate (cone) as GameObject;
-			//GameObject go = new GameObject ();
 			jet.name = jetType + " - " + i;
-			/*
-			LineRenderer lr = go.AddComponent<LineRenderer>();
-			lr.numPositions = 2;
-			lr.useWorldSpace = false;
-			lr.SetPositions (new Vector3[]{Vector3.zero, new Vector3(0,0,float.Parse(values[0]))});
-			lr.startWidth = 0;
-			lr.endWidth = 1;//float.Parse(values[1]);
-			lr.material = mat;
-			lr.numCapVertices = 20;*/
-
-
-			//jet.transform.eulerAngles= new Vector3 ((-180/(float)Math.PI) *float.Parse(values[3]), (-180/(float)Math.PI) * float.Parse(values[1]), 0);
 
 			jet.transform.SetParent (transform);
 		}
@@ -242,16 +221,7 @@ public class IgEvent : MonoBehaviour{
 			// "Tracks_V3": [["pos", "v3d"],["dir", "v3d"],["pt", "double"],["phi", "double"],["eta", "double"],["charge", "int"],["chi2", "double"],["ndof", "double"]]
 			// "Tracks_V3": [[[0.000924736, 0.000185603, -0.0215063], [-0.426364, -0.346344, -0.835619], 0.962035, -2.45938, -1.20648, 1, 15.2759, 11], 
 			string[] values = lines [i].Split (","[0]);
-			/*if(trkLocName.Contains("Tracks")){
-				values[0] = values[0].Substring(2);
-				values[1] = values[1].Substring(1);
-				values[2] = values[2].Substring(1,values[2].Length-2);
-				Debug.Log (values[0]+"\n"+values[1]+"\n"+values[2]);
-				GameObject go = new GameObject ();
-				go.transform.position = new Vector3 (float.Parse(values[0]),float.Parse(values[1]),float.Parse(values[2]));
-			}*/
 			values[trkIndex] = values[trkIndex].Substring(1);
-			//Debug.Log (values [trkIndex]);
 			charge[i] = int.Parse(values [trkIndex]);
 
 		}
@@ -265,7 +235,7 @@ public class IgEvent : MonoBehaviour{
 		try{
 			x = ParseTracks(eventFile, "\"Tracks_V", 9);
 		}catch{
-			Debug.Log ("No charge in event.");
+			//Debug.Log ("No charge in event.");
 			return null;
 		}
 		try{
@@ -275,7 +245,7 @@ public class IgEvent : MonoBehaviour{
 			Array.Copy(x, z, x.Length);
 			Array.Copy(y, 0, z, x.Length, y.Length);
 		}catch{
-			Debug.Log ("No GsfElectrons in event.");
+			//Debug.Log ("No GsfElectrons in event.");
 			return x;
 		}
 		return z;

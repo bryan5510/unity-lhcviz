@@ -19,6 +19,8 @@ public class igLister : MonoBehaviour {
 		content = this.transform.FindChild ("Scroll View").FindChild ("Viewport").FindChild ("Content").gameObject;
 		content.GetComponent<RectTransform> ().localPosition = Vector3.zero;
 		EvSpa = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+
+		Refresh ();
 	}
 	/*
 	void Update () {
