@@ -113,6 +113,11 @@ public class EventSpawner : MonoBehaviour {
 		}
 	}
 
+	void ToggleJets(){
+		showJets = !showJets;
+		GameObject.Find ("IgEvent").GetComponent<IgEvent> ().HideJets (showJets);
+	}
+
 	public int fps = 270;
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
@@ -122,7 +127,7 @@ public class EventSpawner : MonoBehaviour {
 			IncRun ();
 		}
 		if(Input.GetKeyDown(KeyCode.J)){
-			showJets = !showJets;
+			ToggleJets ();
 		}
 		/*if(Input.GetKeyDown(KeyCode.R)){
 			Reset ();

@@ -139,7 +139,10 @@ public class IgEvent : MonoBehaviour{
 
 
 	public GameObject cone;
+	ArrayList jetsArrayList;
 	void ParseJet(string eventFile,string jetType){
+		jetsArrayList = new ArrayList();
+
 		int tracksLoc = eventFile.IndexOf (jetType);
 		eventFile = eventFile.Substring (tracksLoc);
 		tracksLoc = eventFile.IndexOf (":");
@@ -168,14 +171,14 @@ public class IgEvent : MonoBehaviour{
 
 			GameObject jet = MakeJet (data, 10);
 
-			jet.name = jetType + " - " + i;
+			jet.name = "Jet - " + i;
 
 			jet.transform.SetParent (transform);
 		}
 	}
 
 	GameObject MakeJet(float[] data, float selectionCutOff) {
-		var et = data[0];
+		float et = data[0];
 
 		float theta = data[2];
 		float phi = data[3];
@@ -199,14 +202,24 @@ public class IgEvent : MonoBehaviour{
 
 		jet.gameObject.transform.LookAt(new Vector3(length*0.5f*st*cp, length*0.5f*st*sp, length*0.5f*ct));
 
-		if ( et < selectionCutOff ) {
+		if (et < selectionCutOff) {
 			jet.SetActive (false);
+		}else {
+			jetsArrayList.Add (jet);
 		}
+
+		if(!es.showJets) {
+			jet.SetActive (false);
+		} 
 
 		return jet;
 	}
 
-
+	public void HideJets(bool showJets){
+		foreach(GameObject jet in jetsArrayList){
+			jet.SetActive (showJets);
+		}
+	}
 
 	int[] ParseTracks(string eventFile, string trkLocName, int trkIndex){
 		int tracksLoc = eventFile.IndexOf (trkLocName);
