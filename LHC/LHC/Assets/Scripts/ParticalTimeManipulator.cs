@@ -33,7 +33,7 @@ namespace Valve.VR.InteractionSystem
 			//float leftDist = Vector2.Distance (new Vector2(0,-1+buttonSize), touchpad);
 
 			//switch mode by pressing the top button
-			if (hand.controller.GetPressDown (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+/*			if (hand.controller.GetPressDown (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
 				if (-buttonSize < topDist && topDist < buttonSize) {
 					if (mode < 1) {
 						mode++;
@@ -42,8 +42,8 @@ namespace Valve.VR.InteractionSystem
 					}
 				}
 			}
-
-			if (mode == 0) {
+*/
+/*			if (mode == 0) {
 				if (hand.controller.GetPress (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
 					if (-buttonSize > touchpad.x) {
 						if (currentFrame - 1 >= 0) {
@@ -66,22 +66,22 @@ namespace Valve.VR.InteractionSystem
 					}
 				}
 			}else if (mode == 1) {
-				if (hand.controller.GetTouch (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
-					if(-1+buttonSize+buttonSize < touchpad.y && touchpad.y < 1-buttonSize-buttonSize){
+*/				if (hand.controller.GetTouch (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+//					if(-1+buttonSize+buttonSize < touchpad.y && touchpad.y < 1-buttonSize-buttonSize){
 						int t = (int)(((touchpad.x + 1f) / 2f) * sm.fps);
 						IE.SetCurrentFrame (t);
 						//Debug.Log(t);
-					}
+//					}
 				}
-			}
+//			}
 				
 			//on pressing the pause button, toggle pause
-			if (hand.controller.GetPressDown (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
+/*			if (hand.controller.GetPressDown (Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad)) {
 				if (-buttonSize < botDist && botDist < buttonSize) {
 					TogglePause ();
 				}
 			}
-
+*/
 
 		/*
 		*if (device.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)){
