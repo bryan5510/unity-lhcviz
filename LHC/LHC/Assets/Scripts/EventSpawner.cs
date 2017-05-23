@@ -22,12 +22,14 @@ public class EventSpawner : MonoBehaviour {
 	public Material met;
 	public Material proton;
 	public Material electron;
+	public Material lightGreen;
+	public Material darkGreen;
 
 	SettingsManager sm;
 	void Start () {
 		igZippedFolder = new DirectoryInfo ("Data\\igFiles");
 		sm = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
-		Reset ();
+		//Reset ();
 		//SwapRun (0);
 	}
 
@@ -103,6 +105,8 @@ public class EventSpawner : MonoBehaviour {
 		ige.met = met;
 		ige.proton = proton;
 		ige.electron = electron;
+		ige.lightGreen = lightGreen;
+		ige.darkGreen = darkGreen;
 		return ige.parseExtras (i);
 	}
 

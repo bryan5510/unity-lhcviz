@@ -42,7 +42,7 @@ public class TrackMovement : MonoBehaviour {
 
 	public void UpdateLine(){
 		LineRenderer lr = gameObject.GetComponent<LineRenderer>();
-		lr.numPositions = ig.currentFrame;
+		lr.positionCount = ig.currentFrame;
 		Vector3[] LRthisTrack = GetTrack (id,ig.currentFrame);
 		lr.SetPositions (LRthisTrack);
 	}

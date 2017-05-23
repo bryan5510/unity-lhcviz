@@ -38,8 +38,8 @@ namespace Valve.VR.InteractionSystem
 			//Debug.Log (btn.name);
 			EvSpa.SetRun (btn.name);
 			igLstr.ShowEvents (btn.name);
-			btn.transform.parent.parent.parent.parent.FindChild ("Back").gameObject.SetActive (true);
-			btn.transform.parent.parent.parent.parent.FindChild ("Refresh").gameObject.SetActive (false);
+			btn.transform.parent.parent.parent.parent.Find ("Back").gameObject.SetActive (true);
+			btn.transform.parent.parent.parent.parent.Find ("Refresh").gameObject.SetActive (false);
 		}
 
 		public void ChangeEvent ()
@@ -51,7 +51,7 @@ namespace Valve.VR.InteractionSystem
 		public void GoBack ()
 		{
 			igLstr.ShowRuns ();
-			btn.transform.parent.FindChild ("Refresh").gameObject.SetActive (true);
+			btn.transform.parent.Find ("Refresh").gameObject.SetActive (true);
 			gameObject.SetActive (false);
 		}
 

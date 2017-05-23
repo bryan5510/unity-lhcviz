@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System;
 using UnityEngine.UI;
+using System.Linq;
 
 public class IgEvent : MonoBehaviour{
 
@@ -11,6 +12,8 @@ public class IgEvent : MonoBehaviour{
 	public Material met;
 	public Material proton;
 	public Material electron;
+	public Material lightGreen;
+	public Material darkGreen;
 
 	GameObject[] tracks;
 	public int currentFrame = 0;
@@ -128,7 +131,7 @@ public class IgEvent : MonoBehaviour{
 			go.name = metType + " - " + i;
 
 			LineRenderer lr = go.AddComponent<LineRenderer>();
-			lr.numPositions = 2;
+			lr.positionCount = 2;
 			lr.SetPositions (new Vector3[]{Vector3.zero, new Vector3(float.Parse(values[2])/10,float.Parse(values[3])/10,0)});
 			lr.startWidth = 0.01f;
 			lr.endWidth = 0.01f;
@@ -226,6 +229,151 @@ public class IgEvent : MonoBehaviour{
 		}
 	}
 
+
+	/*
+
+	void Update(){
+		if(Input.GetKeyDown(KeyCode.G)){
+			MakeCube (new Vector3(0,0,0),new Vector3(2,0,0),new Vector3(0,2,0),new Vector3(2,2,0)  ,  new Vector3(0,0,-2),new Vector3(2,0,-2),new Vector3(0,2,-2),new Vector3(2,2,-2));
+		}
+	}*/
+
+
+	GameObject MakeCube(Vector3 f1,Vector3 f2,Vector3 f3,Vector3 f4,Vector3 b1,Vector3 b2,Vector3 b3,Vector3 b4, Material boxColor) {
+		//GameObject go = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		//go.transform.localScale = new Vector3(Vector3.Distance (f1,f2),Vector3.Distance (f1,f3),Vector3.Distance (f1,b1));
+		//go.transform.position = f1;
+
+		GameObject go = new GameObject ();
+
+		MeshFilter mf = go.AddComponent<MeshFilter>();
+		var mesh = new Mesh();
+		mf.mesh = mesh;
+		MeshRenderer mr = go.AddComponent<MeshRenderer> ();
+		mr.material = boxColor;
+
+		Vector3[] vertices = new Vector3[]{
+			//front
+			f1,f2,f3,f4,
+
+			//back
+			b1,b2,b3,b4,
+
+			//left
+			b1,f1,f4,b4,
+
+			//right
+			f2,b2,b3,f3,
+
+			//top
+			b1,b2,f2,f1,
+
+			//bottom
+			f4,f3,b3,b4
+
+		};
+
+		mesh.vertices = vertices;
+
+		int[] tri = new int[]{
+
+			//front
+			2,1,3,
+			1,0,3,
+
+			//back
+			7,4,6,
+			4,5,6,
+
+			//left
+			10,9,11,
+			9,8,11,
+
+			//right
+			14,13,15,
+			13,12,15,
+
+			//top
+			18,17,19,
+			17,16,19,
+
+			//bottom
+			22,21,23,
+			21,20,23
+
+		};
+
+		/*
+		 	int[] tri = new int[] {
+			// front
+			0,1,2
+			,0,2,3
+
+			// back
+			,4,5,6
+			,4,6,7
+
+			// top
+			,4,5,1
+			,4,1,0
+
+			// bottom
+			,2,6,7
+			,2,3,7
+
+			// left
+			,1,5,7
+			,1,3,7
+
+			// right
+			,4,6,2
+			,4,0,2
+		};
+		mesh.vertices = new Vector3[]{ f1, f2, f3, f4, b1, b2, b3, b4 };
+		*/
+		mesh.triangles = tri;//.Reverse().ToArray();
+		mesh.RecalculateNormals ();
+		//go.transform.position = new Vector3(-f1.x,-f1.y,f1.z);
+		return go;
+	}
+
+
+
+	void ParseRecHits(string eventFile, string locName, Material boxColor){
+		int tracksLoc = eventFile.IndexOf (locName);
+		eventFile = eventFile.Substring (tracksLoc);
+		tracksLoc = eventFile.IndexOf (":");
+		eventFile = eventFile.Substring (tracksLoc);
+		int tracksEnd = eventFile.IndexOf ("\"");
+		eventFile = eventFile.Substring (3,tracksEnd-10);
+		string[] lines = eventFile.Split ("\n"[0]);
+		for(int i = 0; i < lines.Length; i++){
+			//"EBRecHits_V2": [["energy", "double"],["eta", "double"],["phi", "double"],["time", "double"],["detid", "int"],["front_1", "v3d"],["front_2", "v3d"],["front_3", "v3d"],["front_4", "v3d"],["back_1", "v3d"],["back_2", "v3d"],["back_3", "v3d"],["back_4", "v3d"]]
+			//[0.452491, 1.47677, -2.29626, -2.03797, 838970095, [-0.866318, -0.95971, 2.70935], [-0.879687, -0.976194, 2.69763], [-0.862247, -0.989843, 2.69763], [-0.849168, -0.973133, 2.70935], [-0.93539, -1.04485, 2.91156], [-0.949748, -1.06256, 2.89897], [-0.930778, -1.0774, 2.89897], [-0.916732, -1.05946, 2.91156]]
+			string[] values = lines [i].Split (","[0]);
+			if (float.Parse (values [0].Substring (1)) > 0.5) {
+				Vector3[] verts = new Vector3[8];
+				for (int j = 0; j < 8; j++) {
+					values [5 + (j * 3)] = values [5 + (j * 3)].Substring (2);
+					values [6 + (j * 3)] = values [6 + (j * 3)].Substring (1);
+					values [7 + (j * 3)] = values [7 + (j * 3)].Substring (1);
+					values [7 + (j * 3)] = values [7 + (j * 3)].Split ("]" [0]) [0];
+					//Debug.Log (values [5 + (j*3)] + " -- " + values [6 + (j*3)] + " -- " + values [7 + (j*3)]);
+					verts [j] = new Vector3 (float.Parse (values [5 + (j * 3)]), float.Parse (values [6 + (j * 3)]), float.Parse (values [7 + (j * 3)]));
+					//GameObject vertMarker = new GameObject ();
+					//vertMarker.transform.position = verts [j];
+				}
+				GameObject go = MakeCube (verts [0], verts [1], verts [2], verts [3], verts [4], verts [5], verts [6], verts [7], boxColor);
+				go.name = locName + " - " + i;
+				go.transform.SetParent (transform);
+				go.transform.localScale = new Vector3 (1, 1, -1);
+			}
+			//return;
+		}
+	}
+
+
+
 	int[] ParseTracks(string eventFile, string trkLocName, int trkIndex){
 		int tracksLoc = eventFile.IndexOf (trkLocName);
 		eventFile = eventFile.Substring (tracksLoc);
@@ -297,9 +445,9 @@ public class IgEvent : MonoBehaviour{
 		try{
 			GameObject eventInformationCanvas = GameObject.Find ("EventInformationCanvas");
 
-			eventInformationCanvas.transform.FindChild ("RunNumber").GetComponent<Text> ().text = runNumber.ToString();
-			eventInformationCanvas.transform.FindChild ("EventNumber").GetComponent<Text> ().text = eventNumber.ToString();
-			eventInformationCanvas.transform.FindChild ("EventTime").GetComponent<Text> ().text = eventTime;
+			eventInformationCanvas.transform.Find ("RunNumber").GetComponent<Text> ().text = runNumber.ToString();
+			eventInformationCanvas.transform.Find ("EventNumber").GetComponent<Text> ().text = eventNumber.ToString();
+			eventInformationCanvas.transform.Find ("EventTime").GetComponent<Text> ().text = eventTime;
 			//eventInformationCanvas.transform.FindChild ("EventLocalTime").GetComponent<Text> ().text = eventLocalTime;
 			//eventInformationCanvas.transform.FindChild ("LsNumber").GetComponent<Text> ().text = lsNumber.ToString();
 			//eventInformationCanvas.transform.FindChild ("OrbitNumber").GetComponent<Text> ().text = orbitNumber.ToString();
@@ -318,6 +466,18 @@ public class IgEvent : MonoBehaviour{
 		ParseAllMets (eventFile);
 		try{
 			ParseJet(eventFile,"\"Jets_V");}catch{
+		}
+		try{
+			ParseRecHits(eventFile, "\"EBRecHits_V", lightGreen);}catch{
+		}
+		/*try{
+			ParseRecHits(eventFile, "\"HBRecHits_V", electron);}catch{
+		}*/
+		try{
+			ParseRecHits(eventFile, "\"EERecHits_V", lightGreen);}catch{
+		}
+		try{
+			ParseRecHits(eventFile, "\"HERecHits_V", darkGreen);}catch{
 		}
 
 		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
@@ -395,7 +555,7 @@ public class IgEvent : MonoBehaviour{
 			}
 
 			LineRenderer lr = curve.AddComponent<LineRenderer>();
-			lr.numPositions = sm.fps + 1;
+			lr.positionCount = sm.fps + 1;
 			Vector3[] LRthisTrack = GetTrack (i,sm.fps+1);
 			lr.SetPositions (LRthisTrack);
 			lr.startWidth = 0.01f;
