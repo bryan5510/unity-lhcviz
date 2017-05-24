@@ -252,6 +252,8 @@ public class IgEvent : MonoBehaviour{
 		var mesh = new Mesh();
 		mf.mesh = mesh;
 		MeshRenderer mr = go.AddComponent<MeshRenderer> ();
+		mr.receiveShadows = false;
+		mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		mr.material = boxColor;
 
 		Vector3[] vertices = new Vector3[]{
