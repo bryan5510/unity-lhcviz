@@ -20,6 +20,8 @@ public class IgEvent : MonoBehaviour{
 	public Vector3[,] LRpoints;
 	public bool stopAnim = false;
 
+	ArrayList hitsArrayList;
+
 	public void StartAnim(){
 		stopAnim = false;
 	}
@@ -303,35 +305,7 @@ public class IgEvent : MonoBehaviour{
 
 		};
 
-		/*
-		 	int[] tri = new int[] {
-			// front
-			0,1,2
-			,0,2,3
-
-			// back
-			,4,5,6
-			,4,6,7
-
-			// top
-			,4,5,1
-			,4,1,0
-
-			// bottom
-			,2,6,7
-			,2,3,7
-
-			// left
-			,1,5,7
-			,1,3,7
-
-			// right
-			,4,6,2
-			,4,0,2
-		};
-		mesh.vertices = new Vector3[]{ f1, f2, f3, f4, b1, b2, b3, b4 };
-		*/
-		mesh.triangles = tri;//.Reverse().ToArray();
+		mesh.triangles = tri;
 		mesh.RecalculateNormals ();
 		//go.transform.position = new Vector3(-f1.x,-f1.y,f1.z);
 		return go;
@@ -339,7 +313,7 @@ public class IgEvent : MonoBehaviour{
 
 
 
-	void ParseRecHits(string eventFile, string locName, Material boxColor){
+	void ParseRecHits(string eventFile, string locName, Material boxColor, bool shouldAnimate = false, float cutOff = 0.5f){
 		int tracksLoc = eventFile.IndexOf (locName);
 		eventFile = eventFile.Substring (tracksLoc);
 		tracksLoc = eventFile.IndexOf (":");
@@ -351,7 +325,7 @@ public class IgEvent : MonoBehaviour{
 			//"EBRecHits_V2": [["energy", "double"],["eta", "double"],["phi", "double"],["time", "double"],["detid", "int"],["front_1", "v3d"],["front_2", "v3d"],["front_3", "v3d"],["front_4", "v3d"],["back_1", "v3d"],["back_2", "v3d"],["back_3", "v3d"],["back_4", "v3d"]]
 			//[0.452491, 1.47677, -2.29626, -2.03797, 838970095, [-0.866318, -0.95971, 2.70935], [-0.879687, -0.976194, 2.69763], [-0.862247, -0.989843, 2.69763], [-0.849168, -0.973133, 2.70935], [-0.93539, -1.04485, 2.91156], [-0.949748, -1.06256, 2.89897], [-0.930778, -1.0774, 2.89897], [-0.916732, -1.05946, 2.91156]]
 			string[] values = lines [i].Split (","[0]);
-			if (float.Parse (values [0].Substring (1)) > 0.5) {
+			if (float.Parse (values [0].Substring (1)) > cutOff) {
 				Vector3[] verts = new Vector3[8];
 				for (int j = 0; j < 8; j++) {
 					values [5 + (j * 3)] = values [5 + (j * 3)].Substring (2);
@@ -366,11 +340,31 @@ public class IgEvent : MonoBehaviour{
 				GameObject go = MakeCube (verts [0], verts [1], verts [2], verts [3], verts [4], verts [5], verts [6], verts [7], boxColor);
 				go.name = locName + " - " + i;
 				go.transform.SetParent (transform);
-				go.transform.localScale = new Vector3 (1, 1, -1);
+				//go.transform.localScale = new Vector3 (1, 1, -1);
+
+				if (shouldAnimate) {
+					JetMovement jm = go.AddComponent<JetMovement> ();
+					jm.targetScale = new Vector3 (1, 1, -1);
+					go.transform.localScale = Vector3.zero;
+				}
+
+				hitsArrayList.Add (go);
+				if(!sm.showHits) {
+					go.SetActive (false);
+				}
 			}
 			//return;
 		}
 	}
+
+
+
+	public void HideHits(bool showHits){
+		foreach(GameObject hit in hitsArrayList){
+			hit.SetActive (showHits);
+		}
+	}
+
 
 
 
@@ -464,21 +458,23 @@ public class IgEvent : MonoBehaviour{
 		int[] charge = ParseCharge (eventFile);
 		ParseEventInfo (eventFile);
 		ParseAllMets (eventFile);
+
+		hitsArrayList = new ArrayList();
 		try{
 			ParseJet(eventFile,"\"Jets_V");}catch{
 		}
 		try{
-			ParseRecHits(eventFile, "\"EBRecHits_V", lightGreen);}catch{
+			ParseRecHits(eventFile, "\"EBRecHits_V", lightGreen, true);}catch{
+		}
+		try{
+			ParseRecHits(eventFile, "\"EERecHits_V", lightGreen, true, 1);}catch{
+		}
+		try{
+			ParseRecHits(eventFile, "\"HBRecHits_V", darkGreen, true, 1);}catch{
 		}
 		/*try{
-			ParseRecHits(eventFile, "\"HBRecHits_V", electron);}catch{
-		}*/
-		try{
-			ParseRecHits(eventFile, "\"EERecHits_V", lightGreen);}catch{
-		}
-		try{
 			ParseRecHits(eventFile, "\"HERecHits_V", darkGreen);}catch{
-		}
+		}*/
 
 		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
 		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 

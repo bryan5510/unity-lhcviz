@@ -6,6 +6,7 @@ public class SettingsManager : MonoBehaviour {
 
 	public int fps = 270;
 	public bool showJets = true;
+	public bool showHits = true;
 
 	public bool isAutoLoopOn = true;
 
