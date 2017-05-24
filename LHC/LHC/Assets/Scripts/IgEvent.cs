@@ -346,7 +346,8 @@ public class IgEvent : MonoBehaviour{
 
 				if (shouldAnimate) {
 					JetMovement jm = go.AddComponent<JetMovement> ();
-					jm.targetScale = new Vector3 (1, 1, -1);
+					float r = UnityEngine.Random.value + 0.5f;
+					jm.targetScale = new Vector3 (1*r, 1*r, -1*r);
 					go.transform.localScale = Vector3.zero;
 				}
 
@@ -474,9 +475,9 @@ public class IgEvent : MonoBehaviour{
 		try{
 			ParseRecHits(eventFile, "\"HBRecHits_V", darkGreen, true, 1);}catch{
 		}
-		/*try{
-			ParseRecHits(eventFile, "\"HERecHits_V", darkGreen);}catch{
-		}*/
+		try{
+			ParseRecHits(eventFile, "\"HERecHits_V", darkGreen, true);}catch{
+		}
 
 		//"Extras_V1": [["pos_1", "v3d"],["dir_1", "v3d"],["pos_2", "v3d"],["dir_2", "v3d"]]
 		// [[[0.000924736, 0.000185603, -0.0215063], [-0.746714, -0.606572, -1.46347], [-1.2536, 0.236426, -2.22576], [-0.451694, 0.799546, -1.39922]], 
