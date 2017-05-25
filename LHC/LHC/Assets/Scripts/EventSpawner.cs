@@ -129,9 +129,11 @@ public class EventSpawner : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
 			IncEvent ();
+			GameObject.Find ("CameraCycle").GetComponent<CameraCycler> ().SetCamera (0);
 		}
 		if(Input.GetKeyDown(KeyCode.M) && igsUnpackedFolder.Length > 1){
 			IncRun ();
+			GameObject.Find ("CameraCycle").GetComponent<CameraCycler> ().SetCamera (0);
 		}
 		if(Input.GetKeyDown(KeyCode.J)){
 			ToggleJets ();
