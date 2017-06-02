@@ -57,8 +57,7 @@ namespace Valve.VR.InteractionSystem
 
 		public void Refresh ()
 		{
-			EvSpa.Reset ();
-			igLstr.ShowRuns ();
+			igLstr.Refresh ();
 		}
 
 	}

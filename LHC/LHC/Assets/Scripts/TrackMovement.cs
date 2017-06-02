@@ -28,7 +28,9 @@ public class TrackMovement : MonoBehaviour {
 	}
 
 	public void UpdateDots(){
-		gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(sm.fps*1f));
+		try{
+			gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(sm.fps*1f));
+		}catch{}
 		//UpdateLine ();
 	}
 
