@@ -207,6 +207,7 @@ public class IgEvent : MonoBehaviour{
 
 		JetMovement jm = jet.AddComponent<JetMovement> ();
 		jm.targetScale = new Vector3 (length*0.5f,length*0.5f,length);
+		jm.isJet = true;
 		//jet.transform.localScale = new Vector3 (length*0.5f,length*0.5f,length);
 		jet.transform.localScale = Vector3.zero;
 
@@ -347,7 +348,10 @@ public class IgEvent : MonoBehaviour{
 				if (shouldAnimate) {
 					JetMovement jm = go.AddComponent<JetMovement> ();
 					float r = UnityEngine.Random.value + 0.5f;
-					jm.targetScale = new Vector3 (1*r, 1*r, -1*r);
+					//jm.targetScale = new Vector3 (1*r, 1*r, -1*r);
+					jm.startingScale = new Vector3 (0.2f*r, 0.2f*r, -0.2f*r);
+					jm.targetScale = new Vector3 (1, 1, -1);
+					jm.isJet = false;
 					go.transform.localScale = Vector3.zero;
 				}
 
