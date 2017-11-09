@@ -21,7 +21,7 @@ namespace Valve.VR.InteractionSystem
 
 		void Awake ()
 		{
-			canvasHolder = GameObject.Find ("Player").transform.FindChild("FollowHead").transform.FindChild("CanvasHolder");
+			canvasHolder = GameObject.Find ("Player").transform.Find("FollowHead").transform.Find("CanvasHolder");
 			canvas = GameObject.Find ("Canvas");
 			//camRig = GameObject.Find ("[CameraRig]");
 			//trackedObj = GetComponent<SteamVR_TrackedObject> ();

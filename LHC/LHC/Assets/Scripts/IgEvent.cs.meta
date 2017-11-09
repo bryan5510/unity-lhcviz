@@ -1,12 +1,15 @@
 fileFormatVersion: 2
 guid: 8947289ab01465f46aec49574f62f265
-timeCreated: 1474471581
+timeCreated: 1494611273
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - dotShape: {instanceID: 0}
-  - texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
+  - mat: {instanceID: 0}
+  - proton: {instanceID: 0}
+  - electron: {instanceID: 0}
+  - cone: {fileID: 1599619776205528, guid: 333892122a0f8b94a90b27db02334e65, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

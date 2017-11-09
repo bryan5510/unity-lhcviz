@@ -7,38 +7,43 @@ using Ionic.Zip;
 
 public class EventSpawner : MonoBehaviour {
 
-	DirectoryInfo igFolder;
-	DirectoryInfo[] runFolders;
+	DirectoryInfo igZippedFolder;
+	//DirectoryInfo[] runFolders;
 	FileInfo[] eventFiles;
+	DirectoryInfo[] igsUnpackedFolder;
 	FileInfo[] igFiles;
-	string dataEventPath = "Data\\Events";
+	string dataEventPath = "Data\\UnZippedIgs";
 	int currentEvent = 0;
 	int currentRun = 0;
 
 	public GameObject dotShape;
+	public GameObject cone;
 	public Material mat;
+	public Material met;
+	public Material proton;
+	public Material electron;
+	public Material lightGreen;
+	public Material darkGreen;
 
-	public Button autoLoopButton;
-
+	SettingsManager sm;
 	void Start () {
-		igFolder = new DirectoryInfo ("Data\\igFiles");
-		Reset ();
-		SwapRun (0);
-		ColorBlock cb = autoLoopButton.colors;
-		cb.normalColor = Color.red;
-		cb.highlightedColor = new Color(1f,0.2f,0.2f);
-		autoLoopButton.colors = cb;
+		igZippedFolder = new DirectoryInfo ("Data\\igFiles");
+		sm = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
+		//Reset ();
+		//SwapRun (0);
 	}
 
 	public void Reset(){
 		currentEvent = 0;
 		currentRun = 0;
 
-		igFiles = igFolder.GetFiles ();
+		igFiles = igZippedFolder.GetFiles ();
 		UnzipAll ();
 
-		DirectoryInfo eventFolder = new DirectoryInfo (dataEventPath);
-		runFolders = eventFolder.GetDirectories ();
+		DirectoryInfo iuf = new DirectoryInfo (dataEventPath);
+		igsUnpackedFolder = iuf.GetDirectories ();
+
+		SwapRun (0);
 	}
 
 	public FileInfo[] GetIgFiles(){
@@ -56,11 +61,32 @@ public class EventSpawner : MonoBehaviour {
 	}
 
 	void Unzip(FileInfo fileToUnzip){
-		//Directory.CreateDirectory ("Data");
+		//try{
+		Directory.CreateDirectory (dataEventPath+"\\"+fileToUnzip.Name);
+		//}catch{}
 		using (ZipFile zip = ZipFile.Read(fileToUnzip.FullName)){
-			zip.ExtractAll ("Data", ExtractExistingFileAction.OverwriteSilently);
+			zip.ExtractAll (dataEventPath+"\\"+fileToUnzip.Name, ExtractExistingFileAction.OverwriteSilently);
 		}
 
+		DirectoryInfo igfolder = new DirectoryInfo (dataEventPath+"\\"+fileToUnzip.Name+"\\Events");
+		DirectoryInfo[] allruns = igfolder.GetDirectories ();
+		foreach(DirectoryInfo run in allruns){
+			FileInfo[] allfiles = run.GetFiles ();
+			foreach(FileInfo file in allfiles){
+				try{
+					file.MoveTo (dataEventPath+"\\"+fileToUnzip.Name+"\\Events\\"+file.Name);
+				}catch{}
+			}
+			run.Delete (true);
+		}
+	}
+
+	void fileCleanUp(){
+		Directory.Delete (dataEventPath, true);
+	}
+
+	void OnApplicationQuit(){
+		fileCleanUp ();
 	}
 
 	string GetFileName(FileInfo i){
@@ -74,7 +100,13 @@ public class EventSpawner : MonoBehaviour {
 		igEventObj.tag = "IgEvent";
 		IgEvent ige = igEventObj.AddComponent<IgEvent> ();
 		ige.dotShape = dotShape;
+		ige.cone = cone;
 		ige.mat = mat;
+		ige.met = met;
+		ige.proton = proton;
+		ige.electron = electron;
+		ige.lightGreen = lightGreen;
+		ige.darkGreen = darkGreen;
 		return ige.parseExtras (i);
 	}
 
@@ -85,46 +117,58 @@ public class EventSpawner : MonoBehaviour {
 		}
 	}
 
+	void ToggleJets(){
+		sm.showJets = !sm.showJets;
+		GameObject.Find ("IgEvent").GetComponent<IgEvent> ().HideJets (sm.showJets);
+	}
+	void ToggleHits(){
+		sm.showHits = !sm.showHits;
+		GameObject.Find ("IgEvent").GetComponent<IgEvent> ().HideHits (sm.showHits);
+	}
+
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.N) && eventFiles.Length > 1) {
 			IncEvent ();
+			GameObject.Find ("CameraCycle").GetComponent<CameraCycler> ().SetCamera (0);
 		}
-		if(Input.GetKeyDown(KeyCode.M) && runFolders.Length > 1){
+		if(Input.GetKeyDown(KeyCode.M) && igsUnpackedFolder.Length > 1){
 			IncRun ();
+			GameObject.Find ("CameraCycle").GetComponent<CameraCycler> ().SetCamera (0);
 		}
-		if(Input.GetKeyDown(KeyCode.R)){
+		if(Input.GetKeyDown(KeyCode.J)){
+			ToggleJets ();
+		}
+		if(Input.GetKeyDown(KeyCode.H)){
+			ToggleHits ();
+		}
+		/*if(Input.GetKeyDown(KeyCode.R)){
 			Reset ();
+		}*/
+
+		if(Input.GetKeyDown(KeyCode.Alpha1)){
+			sm.fps = 90;
+			SwapEvent (currentEvent);
+		}if(Input.GetKeyDown(KeyCode.Alpha2)){
+			sm.fps = 180;
+			SwapEvent (currentEvent);
+		}if(Input.GetKeyDown(KeyCode.Alpha3)){
+			sm.fps = 270;
+			SwapEvent (currentEvent);
+		}if(Input.GetKeyDown(KeyCode.Alpha4)){
+			sm.fps = 360;
+			SwapEvent (currentEvent);
+		}if(Input.GetKeyDown(KeyCode.Alpha5)){
+			sm.fps = 450;
+			SwapEvent (currentEvent);
 		}
-	}
-		
-	public float invokeDelay = 3;
-	void AutoMoveToNextEvent(){
-		if (IncEvent ()) {
-			Invoke ("AutoMoveToNextEvent", invokeDelay);
-		}else{
-			Invoke ("AutoMoveToNextEvent", 0.5f);
-		}
-	}
-		
-	public void ToggleAutoMoveToNext(){
-		if (IsInvoking ("AutoMoveToNextEvent")) {
-			CancelInvoke ("AutoMoveToNextEvent");
-			ColorBlock cb = autoLoopButton.colors;
-			cb.normalColor = Color.red;
-			cb.highlightedColor = new Color(1f,0.2f,0.2f);
-			autoLoopButton.colors = cb;
-		} else {
-			Invoke ("AutoMoveToNextEvent",invokeDelay);
-			ColorBlock cb = autoLoopButton.colors;
-			cb.normalColor = Color.green;
-			cb.highlightedColor = new Color(0.2f,1f,0.2f);
-			autoLoopButton.colors = cb;
-		}
+
 	}
 
-	public bool IncEvent(){
+	public bool IncEvent(bool canMoveOntoNextRun = true){
 		if (currentEvent + 1 < eventFiles.Length) {
 			currentEvent++;
+		} else if(canMoveOntoNextRun){
+			return IncRun ();
 		} else {
 			currentEvent = 0;
 		}
@@ -132,10 +176,11 @@ public class EventSpawner : MonoBehaviour {
 	}
 
 	public bool IncRun(){
-		if (currentRun + 1 < runFolders.Length) {
+		if (currentRun + 1 < igsUnpackedFolder.Length) {
 			currentRun++;
 		} else {
-			currentRun = 0;
+			GameObject.Find ("SceneLoader").GetComponent<SceneLoader> ().ReloadScene ();
+			return true;
 		}
 		return SwapRun (currentRun);
 	}
@@ -148,10 +193,10 @@ public class EventSpawner : MonoBehaviour {
 	}
 
 	public bool SwapRun(int i){
-		if(i >= 0 && i < runFolders.Length){
+		if(i >= 0 && i < igsUnpackedFolder.Length){
 			currentRun = i;
 			currentEvent = 0;
-			eventFiles = runFolders[i].GetFiles();
+			eventFiles = igsUnpackedFolder[i].GetDirectories()[0].GetFiles();
 			return SwapEvent (currentEvent);
 		}
 		return false;

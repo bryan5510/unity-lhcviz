@@ -1,76 +1,51 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 
 public class TrackMovement : MonoBehaviour {
 
-	Mesh mesh;
-	Vector3[] verts;
-	int vertCount;
-	int trackCount;
-	int currentFrame = 0;
-	float scale = 0.07f;
+	IgEvent ig;
+	int id;
+	private UnityAction updateDotsListener;
+	private UnityAction updateLineListener;
 
-	GameObject[] dots;
-
-	void Start () {
-		mesh = GetComponent<MeshFilter> ().mesh;
-		verts = mesh.vertices;
-		vertCount = mesh.vertexCount;
-
-		/*for(int i=0; i < vertCount; i++){
-			GameObject dot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-			dot.transform.position = verts[i];
-			dot.transform.localScale = new Vector3(scale/7f,scale/7f,scale/7f);
-			dot.transform.SetParent (transform);
-			dot.name = "basedot";
-		}*/
-
-		trackCount = (int) (vertCount / 33);
-
-		dots = new GameObject[trackCount];
-
-		for(int i=0; i < trackCount; i++){
-			GameObject dot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-			dot.transform.position = verts[i * 33];
-			dot.transform.localScale = new Vector3(scale,scale,scale);
-			dot.GetComponent<Renderer> ().material.color = Color.yellow;
-			dot.transform.SetParent (transform);
-			dot.name = "Track " + i;
-			dots [i] = dot;
-		}
-
-		//StartCoroutine (AnimateDots ());
+	void Awake(){
+		updateDotsListener = new UnityAction (UpdateDots);
+		updateLineListener = new UnityAction (UpdateLine);
 	}
 
-	void Update(){
-		if(Input.GetKey(KeyCode.LeftArrow)){
-			MoveDots (-1);
-		}
-		if(Input.GetKey(KeyCode.RightArrow)){
-			MoveDots (1);
-		}
+	//EventSpawner es;
+	SettingsManager sm;
+	void Start(){
+		//es = GameObject.Find ("EventSpawner").GetComponent<EventSpawner> ();
+		sm = GameObject.Find ("SettingsManager").GetComponent<SettingsManager> ();
+		id = int.Parse(gameObject.name.Substring (6));
+		ig = gameObject.GetComponentInParent<IgEvent> ();
+		EventManager.StartListening ("UpdateDots", updateDotsListener);
+		EventManager.StartListening ("UpdateLine", updateLineListener);
+		UpdateDots ();
+		UpdateLine ();
 	}
 
-	IEnumerator AnimateDots(){
-		int direction = 1;
-		while(true){
-			if (!MoveDots (direction)) {
-				direction *= -1;
-			}
-			yield return new WaitForSeconds(0.017f);
-		}
+	public void UpdateDots(){
+		try{
+			gameObject.transform.GetChild(0).position = gameObject.GetComponent<BezierSpline>().GetPoint((ig.currentFrame*1f)/(sm.fps*1f));
+		}catch{}
+		//UpdateLine ();
 	}
 
-	bool MoveDots(int lr){
-		if (currentFrame + lr >= 0 && currentFrame + lr <= 32) {
-			currentFrame += lr;
-			for (int i = 0; i < trackCount; i++) {//for each track per frame
-				dots [i].transform.position = verts [(i * 33) + currentFrame];
-			}
-			return true;
-		} else {
-			return false;
+	Vector3[] GetTrack(int id, int size){
+		Vector3[] LRthisTrack = new Vector3[size];
+		for(int j = 0; j < size; j++){
+			LRthisTrack[j] = ig.LRpoints [id, j];
 		}
+		return LRthisTrack;
 	}
 
+	public void UpdateLine(){
+		LineRenderer lr = gameObject.GetComponent<LineRenderer>();
+		lr.positionCount = ig.currentFrame;
+		Vector3[] LRthisTrack = GetTrack (id,ig.currentFrame);
+		lr.SetPositions (LRthisTrack);
+	}
 }

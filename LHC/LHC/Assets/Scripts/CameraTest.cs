@@ -25,7 +25,7 @@ public class CameraTest : MonoBehaviour {
 		}
 
 		if(Input.GetKey(KeyCode.Y)){
-			GameObject sbv = GameObject.Find ("Canvas").transform.FindChild ("Scroll View").FindChild ("Scrollbar Vertical").gameObject;
+			GameObject sbv = GameObject.Find ("Canvas").transform.Find ("Scroll View").Find ("Scrollbar Vertical").gameObject;
 			Scrollbar sb = sbv.GetComponent<Scrollbar> ();
 
 			if(1 > sb.value + 0.01f){
@@ -33,7 +33,7 @@ public class CameraTest : MonoBehaviour {
 			}
 		}
 		if(Input.GetKey(KeyCode.H)){
-			GameObject sbv = GameObject.Find ("Canvas").transform.FindChild ("Scroll View").FindChild ("Scrollbar Vertical").gameObject;
+			GameObject sbv = GameObject.Find ("Canvas").transform.Find ("Scroll View").Find ("Scrollbar Vertical").gameObject;
 			Scrollbar sb = sbv.GetComponent<Scrollbar> ();
 
 			if(0 < sb.value - 0.01f){
